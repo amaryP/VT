@@ -14,6 +14,10 @@
 | **EMA**            | Moyenne mobile exponentielle                                          | Tendance de fond, plus réactive qu'une SMA                                                  |
 | **BBands**         | Bandes de Bollinger : BBUpper, BBMid, BBLower                         | Détecte les extrêmes et la volatilité                                                       |
 | **Volume relatif** | Volume actuel / volume moyen sur n bougies                            | Détecte les pics d’activité réels, filtre les actifs peu liquides (seuil de 1.5 recommandé) |
+| **Close**          | Valeur de clôture de la dernière bougie selon l'intervalle choisi     | Sert à positionner le prix dans les bandes ou à confirmer une figure                        |
+| **Open**           | Prix d'ouverture de la bougie analysée                                | Sert à calculer le corps de la bougie                                                       |
+| **High**           | Prix le plus haut atteint pendant la bougie                           | Utilisé pour mesurer la volatilité ou une mèche haute                                       |
+| **Low**            | Prix le plus bas atteint pendant la bougie                            | Utilisé pour mesurer la volatilité ou une mèche basse                                       |
 
 ---
 
