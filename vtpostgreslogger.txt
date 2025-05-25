@@ -1,0 +1,156 @@
+// .env (à placer à la racine du projet)
+# ------------------------------
+# Exemple : .env
+
+BDD_VT_PG_HOST_PC1000=localhost
+BDD_VT_PG_PORT_PC1000=5432
+BDD_VT_PG_DB_PC1000=vt_base
+BDD_VT_PG_SUPER_USER_PC1000=postgres
+BDD_VT_PG_SUPER_USER_PASSWORD_PC1000=motdepasse_superuser
+BDD_VT_PG_USER_VT_PC1000=postgres
+BDD_VT_PG_USER_VT_PASSWORD_PC1000=motdepasse_utilisateur
+
+
+import os
+
+pc_id = "PC1000"
+
+pg_host = os.getenv(f"BDD_VT_PG_HOST_{pc_id}")
+pg_port = os.getenv(f"BDD_VT_PG_PORT_{pc_id}")
+pg_db = os.getenv(f"BDD_VT_PG_DB_{pc_id}")
+pg_super_user = os.getenv(f"BDD_VT_PG_SUPER_USER_{pc_id}")
+pg_super_user_password = os.getenv(f"BDD_VT_PG_SUPER_USER_PASSWORD_{pc_id}")
+pg_user = os.getenv(f"BDD_VT_PG_USER_VT_{pc_id}")
+pg_user_password = os.getenv(f"BDD_VT_PG_USER_VT_PASSWORD_{pc_id}")
+
+print(f"PostgreSQL host: {pg_host}")
+print(f"PostgreSQL DB: {pg_db}")
+print(f"Superuser: {pg_super_user}")
+
+
+import os
+from dotenv import load_dotenv
+
+# Charge le fichier .env situé à la racine du projet
+load_dotenv()
+
+pc_id = "PC1000"
+
+pg_host = os.getenv(f"BDD_VT_PG_HOST_{pc_id}")
+pg_port = os.getenv(f"BDD_VT_PG_PORT_{pc_id}")
+pg_db = os.getenv(f"BDD_VT_PG_DB_{pc_id}")
+pg_super_user = os.getenv(f"BDD_VT_PG_SUPER_USER_{pc_id}")
+pg_super_user_password = os.getenv(f"BDD_VT_PG_SUPER_USER_PASSWORD_{pc_id}")
+pg_user = os.getenv(f"BDD_VT_PG_USER_VT_{pc_id}")
+pg_user_password = os.getenv(f"BDD_VT_PG_USER_VT_PASSWORD_{pc_id}")
+
+print(f"Connexion PostgreSQL sur PC {pc_id} :")
+print(f"Host: {pg_host}")
+print(f"Port: {pg_port}")
+print(f"Base: {pg_db}")
+print(f"Super user: {pg_super_user}")
+
+import os
+import subprocess
+
+# Variables à créer
+variables = {
+    "BDD_VT_PG_HOST_PC1000": "localhost",
+    "BDD_VT_PG_PORT_PC1000": "5432",
+    "BDD_VT_PG_DB_PC1000": "vt_base",
+    "BDD_VT_PG_SUPER_USER_PC1000": "postgres",
+    "BDD_VT_PG_SUPER_USER_PASSWORD_PC1000": "?qAp3Hp$a@y5fih7",
+    "BDD_VT_PG_USER_VT_PC1000": "vt_base_user",
+    "BDD_VT_PG_USER_VT_PASSWORD_PC1000": "9yk3zhCMEhTEP#CR"
+}
+
+--CREATE USER vt_base_user WITH PASSWORD '9yk3zhCMEhTEP#CR';
+
+GRANT CONNECT ON DATABASE vt_base TO vt_base_user;
+GRANT USAGE ON SCHEMA public TO vt_base_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO vt_base_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO vt_base_user;
+ALTER USER vt_base_user CREATEDB;
+
+
+
+def set_env_variable(name, value):
+    subprocess.run(
+        ["setx", name, value],
+        shell=True,
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    print(f"Variable d'environnement créée : {name}={value}")
+
+for var_name, var_value in variables.items():
+    set_env_variable(var_name, var_value)
+
+print("Toutes les variables ont été créées. Pour les prendre en compte, veuillez redémarrer votre session Windows.")
+
+
+# schema_postgre.sql
+# ------------------------------
+CREATE TABLE IF NOT EXISTS evenementset (
+    id SERIAL PRIMARY KEY,
+    symbol VARCHAR(20),
+    dateheure TIMESTAMP NOT NULL,
+    valeur NUMERIC(18,5),
+    rsi14 NUMERIC(6,2),
+    rsi5 NUMERIC(6,2),
+    figure VARCHAR(50),
+    eventlog TEXT
+);
+
+
+# pg_logger.py
+# ------------------------------
+import psycopg2
+from psycopg2 import sql
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+conn_params = {
+    "host": os.getenv("PG_HOST"),
+    "port": os.getenv("PG_PORT"),
+    "dbname": os.getenv("PG_DB"),
+    "user": os.getenv("PG_USER"),
+    "password": os.getenv("PG_PASSWORD")
+}
+
+def log_event(symbol, dateheure, valeur, rsi14, rsi5, figure, eventlog):
+    try:
+        with psycopg2.connect(**conn_params) as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO evenementset (symbol, dateheure, valeur, rsi14, rsi5, figure, eventlog)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (symbol, dateheure, valeur, rsi14, rsi5, figure, eventlog))
+                conn.commit()
+                print(f"✅ Signal loggé : {symbol} @ {dateheure}")
+    except Exception as e:
+        print("❌ Erreur lors de l'insertion :", e)
+
+
+# main_logger.py
+# ------------------------------
+from datetime import datetime
+from pg_logger import log_event
+
+# Exemple de test
+dateheure = datetime.now()
+log_event(
+    symbol="BTC/USDT",
+    dateheure=dateheure,
+    valeur=26425.37,
+    rsi14=28.72,
+    rsi5=33.10,
+    figure="hammer",
+    eventlog="RSI14<30 + BBDown + pattern marteau"
+)
+
+taapi.io KEY
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHVlIjoiNjBhMmIxNjY0MjI0NmNlM2IwNGVlY2Q5IiwiaWF0IjoxNzQ4MDM2MzQ5LCJleHAiOjMzMjUyNTAwMzQ5fQ.8K5AWxE44TTZjo2YgQwOVMqtTHkW5wwVwhHR_0EFawk'

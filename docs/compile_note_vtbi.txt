@@ -1,0 +1,2622 @@
+13/06/2021
+
+
+
+note sur les methodes possibles :
+
+
+
+
+identifier une crypto qui oscille entre deux bornes (sur quelques jours).
+
+
+placer un seuil pour un ordre d'achat d'un montant prédéfini. (on pourrait placer un ordre de ce type)
+
+
+quand ce seuil est atteint : achat
+
+
+quand l'achat est passé,
+
+
+on place un ordre stop limit pour limiter la prise de risque (% ou simplement (c'est le point 0)
+
+
+connexion reguliere pour suivre tout ca (est ce qu'une connexion toutes les 1 mn, ou meme moins est envisageable ? via les usages de binance ? sans doute)
+le systeme peux fonctionner avec une connexion toute les 5, voir 10 mn.
+
+
+soit la valeur monte, alors on annule l'ordre de stop limit, et on le monte, afin d'emuler un ordre treilling stop.
+sit elle stagne, mais sans necessité de bouger le stop.
+soit elle a été vendu, alors on cumule pour calculer les pertes et gains de la journée (pour le moment, on faire sur un cycle de 24h.ou 12h)
+afin d'eprouver la methode.
+donc soit on a atteint un seuil de gain et on arrete pour la journée.
+soit on a atteint un seuil de perte et on arrete pour la journée...
+soit on est entre les deux, et alors on resurveille la crypto en vue d'un point d'entrée.
+cette methode permet d'obtenir un home run, ou d'affiner et de vendre la moitie de la position si le Seuil 2 est atteint (inspiré RDM)
+
+
+
+
+donc se concentrer sur :
+connexion (ca semble ok)
+suivre le cours d'une valeur : pas encore fait
+identifier le portefeuille (ca semble la aussi etre le cas)
+identifier les trades ouverts : pas fait
+identifier les trades clots : pas fait
+annuler un ordre : pas fait.
+passer un ordre : pas fait.
+
+
+sans doute avec un decryptage json.
+
+
+
+
+
+
+Methodo
+Borne haut bas 24h, ce genre de piste
+Conditions de marchés.
+Up down.
+Etc
+
+
+
+
+
+
+test en parallele pour affiner la methode avec kryll... (mais compliqué leur machin...)
+
+
+ok, on defini une paire et une plage de temps pour tester sur les valeurs historiques (tres tres bien pour la mise au point).
+
+
+je vais devoir investir un peu de tunes dans le machin. pour faire du test living.
+
+
+par contre il faudrait au moins que j'arrive a faire déclencher un ordre de d'achat... c'est la premiere etape.
+
+
+On peux changer l'echelle de temps. (cela charge plus de data),
+
+
+
+
+
+
+
+
+l'idée plus fine, c'est de mettre en oeuvre des scenarii de trade.
+plus accessible.
+
+
+surveillance de la valeur, vente sous un certain seuil.
+suivi de tendance
+prise de benefice partiel sur un seuil.
+pour jouer le home run avec la moitie de la tendance.
+
+
+la phase 2, c'est la gestion du nom de trade en fonction des performances des derniere 24h.
+
+
+la phase 3 c'est determiner le point d'entree
+
+
+
+
+
+
+
+
+en gros c'est la methode RDM mais appliqué sur une frequence de temps très courte
+
+
+et automatisé
+
+
+
+
+
+
+d'un point de vue programme,
+
+
+pas forcé de tous stocké en base dans un premier temps, meme si c'est mieux.
+
+
+il suffit d'avoir les id.
+
+
+mais bon.
+
+
+decouper en function,
+
+
+enfin là il y a presque tout déjà avec leur objets.
+
+
+par contre, possible de pouvoir utiliser un sous portefeuille, ca ajouterais une sécurité supplementaire.
+
+
+
+
+
+
+idée pour tracer, le % de baisse sur 24h ok, mais % de baisse sur heure ou minutes, plus pertinent, dans un certain contexte plus global.
+
+
+
+
+peut etre  utiliser un ordre OCO
+
+
+en cas de plantage du systeme, le stop est toujours la.
+
+
+
+
+apriori sur un deal a 63 unité de 40 dollars environ
+on a 2 dollars d'achat et 2 dollars de vente (ordre au prix, au marché, je pense que c'est plus cher)
+
+
+Annulation de l'ordre, ben nickel ca marche🙂
+
+
+passage d'un ordre d'achat
+le clientorderid c'est bon c'est la reference perso, avec lequel on peux tracer l'ordre.
+
+
+
+
+var balance = _client.GetAccountInfo().Data.Balances.FirstOrDefault(e => e.Asset == "TRX").Free;
+var orderId = _client.PlaceOrder("TRXUSDT", OrderSide.Sell, OrderType.Limit, quantity: balance, price: 0.01460m, timeInForce: TimeInForce.GoodTillCancel);
+
+
+exemple de linq (puissant )
+var asdf = client.GetAccountInfo().Data.Balances.Where(e => e.Asset.StartsWith("TRXUSDT".Substring(0, 3)));
+
+
+
+
+var result = client.PlaceOrder(SelectedSymbol.Symbol, OrderSide.Sell, OrderType.Limit, SelectedSymbol.TradeAmount, price: SelectedSymbol.TradePrice, timeInForce: TimeInForce.GoodTillCancel);
+
+
+
+
+var result = client.Spot.Order.PlaceOrder(SelectedSymbol.Symbol, OrderSide.Sell, OrderType.Limit, SelectedSymbol.TradeAmount, price: SelectedSymbol.TradePrice, timeInForce: TimeInForce.GoodTillCancel);
+
+
+
+
+if (result.Success)
+
+
+
+
+
+
+using (var client = new BinanceClient())
+
+
+
+
+            {
+
+
+
+
+var result = client.PlaceOrder(SelectedSymbol.Symbol, OrderSide.Buy, OrderType.Limit, SelectedSymbol.TradeAmount, price: SelectedSymbol.TradePrice, timeInForce: TimeInForce.GoodTillCancel);
+
+
+
+
+var result = client.Spot.Order.PlaceOrder(SelectedSymbol.Symbol, OrderSide.Buy, OrderType.Limit, SelectedSymbol.TradeAmount, price: SelectedSymbol.TradePrice, timeInForce: TimeInForce.GoodTillCancel);
+
+
+
+
+if (result.Success)
+
+
+
+
+messageBoxService.ShowMessage("Order placed!", "Sucess", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+
+
+
+
+else
+
+
+saw that website https://blockduo.com/binance-calculator/ and according to https://www.binance.com/en/fee/schedule, VIP 0 for Maker/Taker with BNB is 0.0750%.
+
+
+
+
+probleme sur le percentage
+voir cette issue
+https://dev.binance.vision/t/what-does-the-percent-price-filter-mean/134
+
+
+
+
+
+impeccable...
+
+
+il faudra gerer le portefeuille, les quantités investi pour les ordre de vente et d'achat.
+
+
+recuperer les valeurs de retour pour valider si les ordres ont ete correctement passé.
+
+
+recuperer un mapping type entityframework pour passer du code a la base, de maniere limpide.
+
+
+
+
+determiner si je pars sur un client windows (bon compromis)
+
+
+voir si je ne peux pas recuperer la structuration sur le net, avec les appels et.
+il y a moyen d'analyser les chandeliers etc.
+
+
+0,15% de frais sur un trade.
+
+
+Donc au dessus de 0,5, il faut placer un stop pour un trade gratuit non ?
+
+
+A la baisse cela s additionne avec le % de perte.
+
+
+Bon le trade de cette nuit a fait +1,4 %
+
+
+Typiquement, il aurait fait  +4,4% avec le systeme auto.
+
+
+Avec un suivi manuel, ca donnait du +7,2%.
+
+
+Mais impossible d assurer un suivi manuel...
+24/24. Et puis on pete les plombs...
+
+
+C est bien l idee, choper une part de la tendance.
+
+
+Appliquer une remontée au trade gratuit assez rapidement ? Pas idiot...
+
+
+Il faut juste ne pas se faire sortir trop vite.
+
+
+Mais ca permet de la laisser respirer.
+
+
+% de vente au marché different ??
+
+
+Determiner un point d entree en fonction des points haut et bas des dernieres 24h.
+
+
+Technique pour profiter des flash pour vendre ou acheter ? Pas mal ca, peut etre dangereux , mais c est pile la philo de choper une part de la tendance.
+
+
+
+
+
+
+il faut scanner les crypto et trouver une opportunité gagnante genre 7 sur 10 ? entre le rsi et les bandes de bollinger, c'est jouable ca non ?
+
+
+oui faut recuperer le rsi et les bandes de bollinger par paire, on analyse les paires, et on voit ce que ca donne en reel, si le cours reparts a la hausse (je joue qu'a la hausse pour le moment)
+
+
+point de sortie ? rapport a bollinger ? hum...
+
+
+comment regarder ca ?   il faut un historique et l'analyser un peu
+via cryto truc
+
+
+
+
+
+
+tradex dynamic index , eventuellement
+
+
+notion de nombre de periode sur le bb ainsi que sur le RSI...
+
+
+
+
+bizarre pour affiner.
+
+
+créer un programme qui scanne les valeurs (mettons eventuellement un préliste de 40 valeurs max.)
+
+
+et qui recupere les valeurs bollinger et RSI  (si cours proche de bollinger down + rsi survendu alors point d'entrée potentiel ?) ?
+
+
+
+
+bon je pars sur le meme mode que pour le projet autoasap (un client lourd windows.)
+
+
+mai je vais devoir ajouter une babase ou un truc comme ca.
+
+
+avec un mode de deconnexion/reconnexiion toute les heures.
+
+
+on part sur un projet scalping en fait.
+
+
+
+
+RSI 14 !!!!!
+merde heu !!!!
+
+
+
+
+Lorsque le 5 passe au dessus du 14, cela signifie que les prix les plus récents augmentent. Un signal d'achat est alors généré. Le croisement de ces deux indicateurs devrait se produire lorsque le plus court est sur-vendu, donc inférieur à 30.
+Lorsque le 5 se trouve en dessous du 14, cela signifie que les prix récents diminuent. Il s'agit d'un signal de vente. Ce croisement intervient lorsque le plus court est sur-acheté, soit au-dessus de 70.
+
+
+mieux encore !!!
+
+
+
+
+a priori ca semble en correlation tout de meme la.
+
+
+
+
+donc on aura alors comme condition pour un bon signal d'achat
+
+
+prix proche de la bande lower de bollinger
+RSI 14 sous les 30
+RSI 5 au dessus du RSI14
+
+
+en suite, tant que le RSI 5 demeure au dessus du RSI14 alors, on surf. eventuellement on peux positionner un ordre de protection, voir un oco pour avoir un trade gratuit,
+
+
+faut un systeme pour detecter ca en temps réel et analyser ce que fais le signal... sans prendre une vraie position pour autant... parce que la ...franchement
+la lecon a 190 euros de perte potentiel...
+
+
+bon si je stocke les valeurs, voir les signaux d'achat, je peux voir les perf/ la validité du truc.
+
+
+donc il faut eventuellement stocker le cours de la valeur aussi...
+
+
+
+
+aie a priori on ne peux pas recuperer les indices...
+
+
+une autre api le fait, mais si on appel gratuitement l'a pi, c'est max un indicateur par minutes..
+
+
+
+
+ca coute entre 5 et 10 euros par mois, pour 10 appels par seconde par exemple...
+
+
+confirmer si l'api binance ne fait pas ca malgré tout.
+
+
+pour calculer il faut de la data sur un historique... reloud...  pour 5 a 10 euros par mois ca peux coller, c'est decorreler des sommes investis.
+
+
+par contre, par rapport a un comportement d'un utilisateur moyen...  possible que ca nous pose des soucis, on peux respecter les elements de frequences, les ratios d'ordre annuler ou de trade
+mais on ne peux defaire tout.
+a creuser
+
+
+l'idée c'est de suivre avec l'api (pour peu que les données soient ok)
+
+
+et de se connecter a binance, uniquement pour passer les ordres ...
+ainsi on evite les appels intempestifs
+
+
+ok ca fonctionne tres bien...
+
+
+https://api.taapi.io/rsi?secret=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBoaWxpcHBlLmFtYXJ5QGdtYWlsLmNvbSIsImlhdCI6MTYyMTI3NDk4MiwiZXhwIjo3OTI4NDc0OTgyfQ.9smxGMuHVwT4mAYPKX7QWC2I_NX3kVaN1HS7G0LlMd8&exchange=binance&symbol=BTC/USDT&interval=1h&optInTimePeriod=5
+
+
+avec optintimeperiod on peux tout a fait recuperer l'indice que l'on souhaite.
+formidable.
+
+
+a priori c'est juste dingue...
+
+
+même pas besoin de stocker les historiques,
+
+
+on peux tourner sur les x valeurs.
+juste quelques infos de trade pour les calculs de money management et de risk management et de calcul de plus value.
+
+
+
+
+donc il faut preparer un modele avec un ecran et des valeurs, c'est quand même plus pratique.
+
+
+
+
+
+
+on a besoin de la bande de bollinger (de base ?)  pour avoir un deuxieme indice.
+
+
+on pourra améliorer la methodo ensuite, mais il faut deja avoir des resultats.
+
+
+donc bon
+
+
+tracer les trades
+
+
+
+
+tactique de point d'entrée et de sortie ?
+decaler d'un point ou deux avant de rentrer (confirmation de la tendance quelquepart)
+du coup on pose des stops ou pas ?
+ou alors on place un OCO de base, on surveille via api taapi.io et , on annule l'ordre OCO et on remonte le truc, ou on vends la position.
+
+
+
+
+on tourne sur les 40 valeurs ? oui c'est sans doute plus prudent. en tout cas uniquement les paires en usdt, sinon c'est plus compliqué pour le moment. et pas sur le BNB.
+ca fait deja un paquet de valeur.
+
+
+on verra pour resteindre la liste...
+on va la placer dans le programme je pense pour le moment (je repousse le moment ou je vais devoir creer une base de données)
+
+
+un appel par seconde dans l'option a 2 euros par mois, ca risque d'etre un peu limite pour suivre en plus une valeur
+
+
+pro = 10 euros par mois/ 10 calls par secondes
+
+
+ok j'ai pris
+
+
+dans quel objet stocker le truc ? pourquoi stocker pour le moment ?
+
+
+j'ai besoin d'une structure pour rentrer les paires a scanner le mieux c'est de scinder en une liste pour le moment, vu que je travaille sur sur usdt.
+
+
+
+
+quelle structure pour boucler ? json avec du linq ?
+
+
+bon il a detecté un truc, mais pas genial, ca a fait un gros plouf derriere.
+
+
+soit il faut attendre quelques minutes pour confirmer,
+
+
+soit attendre un decalage un peu plus important, genre 1 point d'indice.
+
+
+il faut surtout que je scanne plus de crypto
+
+
+
+
+bonne purge ce jour... prise de tete.
+
+
+faudra rerentrer sur le marché pour ne pas louper le rebond potentiel...
+
+
+
+
+pour la mise au point, il suffit que je simule les ordres tout simplement et que je fasse le calcul des plus values/moins values, afin de mettre au point la methode tranquillement.
+on simule juste les ordres, on les passes pas en réel.
+mais on comptabilise et on suit le court tout pareil.
+
+
+en faire un outil de pilotage egalement
+
+
+genre simulation de stop traillng, faire du suivi de tendance a ma place... pour eviter de se prendre la tete...
+
+
+mais pour ca il faudrait que mon outil soit tres fiable
+
+
+comment stocker les simulation de trade (c'est l'ideal). pour la mise au point du programme et le test de la methode sans prise de tete.
+
+
+regarder les bases.
+
+
+intervale de temps ? je ne sais plus, il me semble que c'est 15 mn de base.
+
+
+je tourne sur une centaine de crypto, ça c'est pas mal.
+
+
+alors plug d'une base ? c'est quand meme l'idéal...
+
+
+là je pourrais me contenter d'un fichier log, qui enregistre le suivi et les ordres, afin de calculer le truc....
+
+
+on pars sur une mise simulé de 1000 dollars par trade ?
+
+
+
+
+là j'ai relancé le programme, et il n'y pas de point d'entrée du tout semble t il.
+
+
+
+
+
+
+mettre une protection sur lae json, parfois il y a un plantage.
+
+
+une opportunité detectée...mais ca semble etre un bug...le calcul du rsi ne semble pas ok... en tout cas il est différent.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RSI
+25/06/2021
+
+dev vtbi
+
+
+
+
+ajout de la couche de base de données
+
+
+utilisation d'entity framework.
+
+
+j'arrive a creer, la base est crée, la classe aussi
+je la mets en oeuvre pour stocker l'info
+
+
+j'applique add et savechange, mais rien ne s'inserer dans la base, et pas de message d'erreur non plus...
+
+
+voir si on est bien loggé sur la bonne base ? peut etre une configuration n'est pas bonne...
+
+
+en tout cas ca semble ok...
+
+
+
+
+
+
+ok ca enregistre
+
+
+mon troncage de valeur est trop important, il faut conserver 5 decimales....
+
+
+
+
+pas sur les indices (deux decimales) , mais sur les valeurs.
+
+
+
+
+ok c'est reglé, ces problemes de décimales,
+
+
+j'ai mis le systeme en place, pour enregistrer les opportunités et super opportunité et les loggueur.
+
+
+
+
+je pourrais analyser sur 24h du coup, et voir les frequences.
+
+
+ensuite, je pourrais me baser sur le log pour declencher les suivi fins ?
+
+
+ou simplement appeler un autre process.
+
+
+en tout cas, je suis déjà en position pour rechercher des franchissements de seuils, meme si il ne s'agit pas du coeur de methode.
+
+
+
+
+
+
+probleme sur le calcul RSI 5... soit un bug soit une difference problématique coté api ?  pas de bug, semble til, un vrai probleme de calcul coté de l'api.
+
+
+comment
+pas bon ca.
+
+
+
+
+probleme d'exception ailleurs, faut mettre des try, mais dans ce cas la, il ne faut pas evaluer la paire en entier pour eviter de faux signaux.
+
+
+
+
+
+
+ok, super, hotline très reactive.   un bug a la con dans mon code.
+
+
+donc les signaux sont ok et fiable.
+
+
+mon programme tourne pour choper les bons signaux.
+
+
+je scan sur les monnaie avec une periode a 15 mn, faut il aussi scanner sur une periode a 1h ?
+
+
+on va voir ce que cela donne en terme de peche aux opportunités.
+
+
+ok, j'ai des points d'entrée detectés.
+
+
+maintenant, si je simule mon ordre d'achat,
+on est juste rentré sur le marché. il faut maintenant etablir le point de sortie à la baisse et sinon le suivi de tendance.
+
+
+donc on doit suivre ces valeurs ensuite.
+
+
+
+
+deja pour valider la methode, donc on enregistre la valeur tout les combien ??
+
+
+pour l'analyse, il faut que j'enregistre les valeurs du trade...
+j'ai une table event ok
+une table trade ok
+eventuellement une table order
+
+
+mais là c'est une table log.
+Logvalue ?
+quelle frequence ?   variable,
+
+
+ordre d'achat
+
+
+alors on alimente le trade et
+la présence dans le  trade declenche le suivi de valeur
+
+
+
+
+
+
+ok, ca avance bien,  assez fluide et code assez simple avec les entity framework et les LINQ.
+c'est bluffant.
+
+
+pour le moment je ne fait rien sur R1.
+
+
+je voudrais implementer directement dans la classe les calculs de gain.perte
+
+
+c'est sur les interfaces je crois ?
+on derive d'une methode standard et hop.
+enfin je vais pas trop perdre de temps sur ca.
+
+
+a la cloture du trade, on peux calculer les trucs.
+
+
+on pose un oco pour garantir le stop loss en cas de plantage du programme ?
+au moins dans une premiere version.
+on est pas a l'abri des flash crash dans ce cas mais bon pour une premiere version c'est ok.
+
+
+hormis des mi cliquet, je vois pas comment gere le stop treilling (on peux surement affiner, avec des signaux, qui emule le trelling.)
+
+
+
+
+
+
+bon je peux simuler sans frais pour le moment, afin de faire tourner le logiciel et de l'optimiser.
+
+
+ca commence a prendre tournure, il faut de la data pour valider la methode également.
+
+
+là il manque vraiment la fonctionnalité de suivi de tendance,
+
+
+stop loss, puis passer le STOP a R1, quand R1 est franchi (mais a combien le placer, il y a des signaux pour affiner le choix justement.) ==> optimisation
+
+
+une fois R2 atteint => transformer la vente en un suivi de tendance (soit sinon vendre la moitie de la position ?)
+
+
+donc en gros, on va se placer 20% en dessous du R2, et soit ca vient toucher R2-20%, soit on continue a monter le stop en restant 20 % en dessous
+(20 % étant un parametre justement).
+il faut qu'on ajoute des colonnes dans le Trade pour assurer le scenario, en gros seuil franchi type
+R0 touché, R1 touché R2 touché
+stop trailling. (recalcul).
+
+
+pour le moment va se contenter de placer un stop Trailling a R2-20% (on peux donc le calculer en amont).
+et de remplacer l'ordre de vente a R2, par une activation du stop sur cette base.
+
+
+il faut une colonne STOP courant. ce qui va eviter de multiplier les conditions, on aura toujours un stop
+
+
+il va falloir surement falloir affiner le  point d'entrée, le RSI 5/14 ne suffisera sans doute pas.  trouver des infos la dessus, on doit avoir des  signaux qui viennent aider le choix.
+mais il faut laisser aussi tourner la solution actuelle et integrer le stop trailling afin de laisser les sorties par le haut se developper, c'est super important.
+ca reste la strategie couper les pertes et laisser les gains filés)
+
+
+
+
+integrer le cout des frais, assez rapidement.
+
+
+
+
+scanner les 15m et 1h ?
+on peux faire ca effectivement...
+ca augmente les cas
+
+
+on fait ca
+et ensuite en priorité le stop trailling, c'est le truc le plus important.
+
+
+
+
+marrant le truc est montée a +155 euros de plus value sur la journée
+
+
+et la -71 .
+
+
+avec 150 trades.
+
+
+evidemment , il faudra ajouter le money management
+mais surtout le stop trailling, et sans doute un indicateur de tendance en plus., c'est a perte sur les marchés globalement baissier
+
+
+un indice de marché global ? a creuser, on va trouver.
+mais deja,
+
+
+
+
+
+
+select sum(gain),sum(perte),sum(gain)-sum(perte)   from TradeSet where Statut='CLOSE'
+
+
+--order by DateHeure desc
+
+
+
+
+select * from TradeSet where statut='CLOSE'
+
+
+bon ca fait l'effet inverse, stop des gains...
+
+
+il faut ajouter la gestion de la rehausse de R1 depuis R0 en plus...
+afin de limiter a la baisse...
+
+
+quand R2 est franchi c'est a R1 qu'on doit positionner non plus tot ?
+
+
+je vais mettre ca en place.
+mais là ca fonctionne bien mieux., a confirmer evidemment.
+
+
+7,38324
+	
+0,00000
+
+
+1,35100
+	
+0,00000
+
+
+0,00000
+	
+12,21372
+
+
+0,00000
+	
+15,57590
+
+
+2,85000
+	
+0,00000
+
+
+4,46700
+	
+0,00000
+
+
+0,00000
+	
+10,29800
+
+
+8,53970
+	
+0,00000
+
+
+4,74496
+	
+0,00000
+
+
+0,00000
+	
+14,57750
+
+
+30,72675
+	
+0,00000
+
+
+16,16706
+	
+0,00000
+
+
+13,80000
+	
+0,00000
+
+
+18,63888
+	
+0,00000
+
+
+15,43945
+	
+0,00000
+
+
+26,32568
+	
+0,00000
+
+
+19,35824
+	
+0,00000
+
+
+19,84463
+	
+0,00000
+
+
+19,36232
+	
+0,00000
+
+
+14,91750
+	
+0,00000
+
+
+7,44156
+	
+0,00000
+
+
+16,95750
+	
+0,00000
+
+
+18,10280
+	
+0,00000
+
+
+18,84576
+	
+0,00000
+
+
+26,24634
+	
+0,00000
+
+
+ca donne 258 euros de plus value avec 26 trades...
+pas evident que cela soit accepté par binance...
+a voir...
+
+
+il doit y avoir aussi une tendance de marché., il faut trouver un signal pour cela.
+et sinon limiter le nombre de trade en meme temps (a priori on va mettre une limite a 4/5 trades open en même temps... monnaie management)
+
+
+et une limite de securité aux pertes par jour non ? une sorte de mode securité.
+voir gain du jour ? si un gain est atteint, soit on securise et on arrete (on peux estimer que statistiquement ca devrait tourner), soit il faut profiter si les opportunités sont toujours la.
+
+
+ah mon avis, avec un nombre limite de trade simultané, et un max de perte ou de gain, ca va pas mal limiter les trades déjà.
+
+
+trouver un signal de marché ou sur la valeur...
+
+
+il faut aussi reflechir a un systeme de securité, qui vient verifier les operations, avec des limites physiques.
+
+
+prise en compte des frais
+
+
+statut different pour en cours d'achat ou en cours de vente, (solde des operations.)
+
+
+pour le moment, je n'arrive pas a y croire... ca me parait trop beau pour etre vrai...
+
+
+on passe dans le process de vente ensuite... au marché ? vraisemblablement oui.  ca modifie la valeur de la vente. on va devoir stocker le prix de vente.
+
+
+
+
+en plus là il suffit de changer les ordres type OCO non ? ... en cas de probleme logiciel, les ordres restent en place, bon sauf si ca plante apres l'annulation...
+
+
+
+
+limite à 5 trades en meme temps pour le moment
+bon limite a 5 % du capital
+
+
+pas de prise en compte de la volatilité de la valeur. c'est juste hyper volatil tout le temps alors...
+
+
+on pourra nuancer avec les trades neutraliser... mais avec les flash crash... pas si evident quand meme.
+
+
+mettre les symbols dans une table pour faciliter l'administration (j'ai viré deux trois monnais comme ca), rechecker les monnaies sur binance.
+
+
+module d'arbitrage si plusieurs trades possible au meme moment... il faut des signaux supplementaires pour ecremer les meilleurs.
+
+
+laisser tourner
+
+
+pas d'opportunité. je pensais que c'etait mon programme qui deconné, mais j'ai ajouté une table de log des signaux, est effectivement, pas d'opportunité dans les clous depuis hier.
+
+
+pas bien grave. le systeme tourne et ne plante pas, c'est cela qui compte.
+
+
+pas contre effectivement il y a un autre signal a ajouter pour confirmer la tendance et eviter les trades a perte systématique.
+
+
+
+
+augmenter le nombre de paire potentiel ? il y a la problematique du calcul du montant, vu qu'on raisonne en usdt... 
+comment gerer cela ? on est sur des paires sans reference la.
+
+
+
+
+autre solution: tester avec seulement le RSI 5 au dessus du RSI14, il va y avor plein de cas comme ca... plein de faux signaux aussi.
+
+
+tellement simple de tester, cela dit.
+
+
+on peux dire tant que RSI14 <50 ? on peux taper le marché ? j'ai mis a 60 pour avoir des cas, mais ca semble bidon.
+
+
+faut recouper avec un signal
+
+
+et un RS14-RSI5>1 mais inferieur a 2, il faut prendre cela au debut. on tests🙂
+
+
+
+
+on essaye ?
+
+
+ok, j'ai implementé la methode.
+
+
+si cela fonctionne, on pourra tester la qualification des datas.
+
+
+mais il faut absolument un autre signal, volume ou autre, peut etre tout simplement identifier un marché baissier/haussier sur le BTC
+
+
+
+
+hum, si on a un marché tres haussier, on pourrait considerer un trade securisé au dela d'un certain R? genre 4 fois ? et ainsi pouvoir  lancer un autre trade (spécialement interessant sur un marché globalement haussier)
+
+
+a voir, potentiellement
+dangereux, mais on serait déjà dans une optimisation.
+
+
+
+
+MACD c'est le truc
+
+
+
+
+simplement un indicateur de variation sur l'interval considéré ?  sur 15 m ou 1h, on a une valeur de marché global ou juste sur le BTC ?
+si BTC en positif alors on y va
+sinon negatif non
+si a l'equilibre ??
+cet indicateur la ?
+sur la valeur elle meme ou sur le BTC ?
+il faudrait la recuperer pour l'analyser en rapport avec ce qui s'est passé hier non ?
+
+
+simplement sur un BTC orienté a la hausse, ca devrait suffir me semble t il ?
+
+
+a tester.
+
+
+
+
+bon donc deux chose a tester :
+
+
+minimiser les pertes, avec stop trelling similaire dès que R1 est dépassé, on passe en variable et on  mets a 0.5 en trelling. ca veut dire qu'on ne laisse pas respirer donc ? pas sur que ca soit pas contre productif
+on risque d'avoir des petites pertes certes, mais plein...
+voir ce que donne le price direction
+mais il faudrait une configuration de marché spécifique pour tester .
+ou alors multiplier les exe, avec des parametres differents. (la je truc c'est que suivant le marché, certaines methodes fonctionnes ou pas... donc bon, pas envie de rentrer dans ce genre de consideration a ce stade.
+
+
+
+
+sans doute un critere de volalité ou de volume a ajouter, pour eviter d'avoir des trades figés...
+
+
+tant que le marché n'est revenu dans une config standard, je ne peux pas poursuivre les tests.
+
+
+it's pity
+
+
+en fait il faut faire du split testing... quelque part, une methode empirique tout simplement...
+
+
+il me faudrait dupliquer le modele, afin de tester plusieurs methode en meme temps...hum...
+il faudrait rajouter pour cela une colonne dans les tables (methode ?) mais il y a des criteres a prendre en compte non ? pas certain que l'on est besoin de cela.
+
+
+par contre ca complexifié  un peu le code également non ?
+
+
+
+
+mais c'est tellement ca qu'il faut faire... on change un parametre, et on constate sur un jour, x jour.
+
+
+j'ai déjà 8 methodes en TEST.
+et je pourrais facilement en mettre d'autre, benchmarking... empirique mais efficace avec un ordi et un programme
+
+
+il faut ecarter les paires qui ne fluctuent pas assez, pour eviter d'immobiliser du capital dans des trades longs
+les filtrer avec un indice de volatilité ou de volume ?
+
+
+
+
+
+
+select Methode_code_methode,
+sum(gain) as gain ,sum(perte) as perte,sum(gain)-sum(perte) as resultat
+from TradeSet
+--where Statut='CLOSE'
+group by Methode_code_methode
+order by Methode_code_methode
+--and
+--DateHeureDebut>=CONVERT(DATETIME, '2021-06-23', 102)
+
+
+
+
+select Methode_code_methode,
+sum(gain) as gain ,sum(perte) as perte,sum(gain)-sum(perte) as resultat
+from TradeSet
+where Statut='CLOSE'
+and
+DateHeureDebut>=CONVERT(DATETIME, '2021-06-23', 102)
+
+
+group by Methode_code_methode
+order by Methode_code_methode
+
+
+bon les methodes type NEW semblent un peu moisi...
+les TRADI, impossible de se prononcer, aucune perte, aucun gain, c'est deja ca. là j'ai que des pertes sur l'ensemble des NEW, dans ce contexte,  les signaux que j'ai mis en place ne sont pas bon pour detecter les faux signaux.
+a voir ce que cela donne, coupler avec les TRADI, là la plus grosse perte est sur celle qui n'utilise pas ces signaux
+sans doute il va falloir passer par des choses plus complexes, du type analyse des bandes de bollinger (avec codage sur l'historique, le resserement de cela
+
+
+
+
+ajouter une protection sur le  la recupe des valeurs, ca a planté a 3h.
+
+
+
+
+il faudrait ajouter et tester une methodo qui repose sur la sortie du trade apres R1 touché non ?  voir si cela impacte les pertes, ca serait pas mal.
+peut etre une methode de sortie differencié pour avoir un split test R1 touché, alors on passe en mode trailling avec 0.5 dessous ? a voir comment implementé le truc.
+peut etre compliqué non ?
+a ben non il suffit de conditionner le tout via la methode
+
+
+en fait il y a une methode d'entrée
+une methode de suivi
+et une methode de sortie...
+ca complifie le modele encore ca..; hum comment faire
+
+
+je peux m'en sortir en precisant un suffixe on aurait une part methode entrée, une part suivi, une part sortie potentiellement...
+4 lettres pour l'entrée j'ai 5 la... on peux splitter  on a droit a 20 caracteres
+XXXXX_XXXXX_XXXXX
+17 c'est bien on split avec le _
+
+
+ensuite on a une fonction de split qui retourne la methode d'entrée, soit la methode de suivi, soit la methode de sortie
+a par contre il faut alors generer autant de trade de methode de suivi ou de sortie... hum...
+
+
+le souci c'est la split, c'est qu'il faut multiplier les trades, et pas forcement à la selection du trade, par définition...
+mais on doit multiplier les trades a l'entrée donc dans l'inityalise trade tout simplement.
+
+
+et ensuite dans son traitement de suivi.
+bug conceptuel sur la gestion des 5 trades, puisque la on doit venir verifier si on n'a pas le type de suivi ...
+sinon ca vient biaiser les stats...
+
+
+1,2,3,
+autre idée, utiliser les methodes elles meme comme des signaux, c'est pas con ca... si tu as x methodes qui se mettent a performer, c'est un indicateur pour lancer des vrais ordres.  c'est du super signal perso, a creuser.
+inversement on debraye si les methodes engragent des pertes.
+
+
+
+
+TYPE_TRADE
+T
+
+
+on peux aussi, sortir du trade en stop loss a 0.5 ?
+
+
+a voir ce que cela donne.. dans la réalité, si ca minimise les pertes ou pas. dissymetrie
+
+
+
+
+
+
+utilisation des trade fictifs comme un signal, alors le seul souci c'est que les trades sont potentiellement encours.
+si on devine l'avenir, une fois qu'il est passé... aucun interet
+donc il faut analyser le trade en cours... si potentiellement en plus value, on le compte comme trade gain ou inverse
+ca complexifie le truc, mais a tester la aussi.
+
+
+
+
+28/06/2021
+
+Autre methode
+
+
+Quand rsi5 > rsi14 .
+Avec un bornage a plus 70.
+
+
+Peut etre utilisé le bilan des trades test sur l interval de temps consideré.
+sauf que le trade donne l'info uniquement une fois cloturé.. donc trop tard.
+il faut estimer l'allure du trade en temps réel, donc comparer avec la valeur courante ... hum. faut il stocker cela dans la table trade, pour faciliter l'estimation des trades fictifs ?
+c'est sans doute le plus simple... meme si c'est bizarre de stocker cela la.
+
+
+en tout cas, la valeur est estimé, donc autant la stocker peut etre, sau
+Comment marqué cela ? Sans creer une table supplementaire
+Trade fictif/reel
+
+
+
+
+bon j'ai mis en place un suivi avec un stop a 0.5% de perte.
+
+
+assez sceptique sur cela.
+
+
+hum, j'ai un bug dans le programme la, on ne gere plus toutes les trades la... simplement le first, ma facon de faire ne colle plus avec le modele.
+
+
+
+
+bug sur les achats, j'ai pris un eth a 1815... alors que je dois miser 1000 dollars au max
+
+
+peut etre un indicateur global, sur la variation a 24h?
+
+
+mais dans les faits, on touche un point bas avec ce genre de variation qui precede non ?
+
+
+ADX
+
+
+on doit bien analyser une tendance , un film et pas une photo.
+
+
+d'ou la recup de l'historique via l'api.
+
+
+interessant, les methodes sont parfois plus adapté a une config de marché.
+alors ca reste compliqué, mais un robot trad pareil, on peux envisager d'utiliser une methode par config de marché... un peu comme un voilier qui joue sur son positionnement et sur ces types de voiles.
+
+
+
+
+ADX donne la force de la tendace
+-DI
++DI
+ceux la donne le sens de la tendance.
+
+
+
+
+Pour profiter de la dynamique des marchés (momentum), les traders peuvent utiliser des indicateurs techniques de momentum comme le RSI, le momentum, la MACD, le Stochastique ou encore l’ADX.
+
+
+
+
+
+
+Lorsque la ligne ADX passe au-dessus de 25 par le bas et que +DI est au-dessus de -DI, une tendance haussière apparaît ou est présente sur le marché.
+
+
+
+
+donc il faut pouvoir determiner la dynamique (film) pour savoir si on franchi la ligne 25 de bas en haut...
+
+
+strategie de fermeture de trade ouvert depuis trop longtemps ? => ca veut dire de mettre un autre parametre en route (mais pas genant ca)
+
+
+
+
+ok
+
+
+donc recuperation du back sur  10 periodes
+
+
+il faut stocker les valeurs,
+et les analyser ensuite...
+pour avoir tout simplement pour le moment, une tendance bien etabli type > > > > > , peut etre que la periode a analyser est celle inferieur au trade, c'est a dire x quart d'heure pour trader sur 1h
+typiquement, pour jouer sur 15mln, il faut etudier sur la minute, mais est ce possible ?
+
+
+ok on peux recuperer les 15 dernieres minutes par exemple, ou les 10 derniers tout simplement.
+analyser la tendance de la courbe
+analyser la tendance du rsi14 ? bof pas tellement necessaire a ce stade.
+il faut deja faire l'analyse de la tendance et coder la recup du backtrack
+
+
+a priori on ne devrait recuperer que le back strack que si on a on a bien RSI5 > RSI 14 non ?
+dans ce cas, ca optimise le truc.
+mais si on le stock alors on peux quand meme garder l'info pour les autres methodes, eviter les aller retours ? bon on est deja sur de l'optimisation, peut etre pas necessaire a ce stade.
+
+
+
+
+bon j'ai codé un peu à l'arrache, j'ai peu bricolé pour la recuperation de valeur depuis le parseur
+mais bon ca fonctionne
+et assez brut l'analyse de la hausse (simple la hausse doit etre constante sur les 5 dernieres minutes)
+la phase suivante, c'est forte hausse ...qu'est ce qui caracterise cela ? un taux de montée, c'est a dire une difference entre chaque minute =x ou un differentiel entre la 1er et la 5 eme minute d'au moins 10 points par exemple ??
+qui traduit une forte décéleration des ventes ?
+
+
+
+
+ok
+pas de recup, hier soir en perte sur la methode NEW6 (celle avec le signal)
+
+
+48 trade sur 27 (mais il n'est que 8h du matin... c'est a dire qu'on risque d'avoir quoi ? 150 trades sur la journée)
+
+
+25 sont perdants (147 euros de pertes soit 5.88 euros de pertes moyen)
+23 sont gagnants (248 euros de gains soit  10.7 euros de gain moyen)
+
+
+resultat : 100 euros de gains.
+
+
+les pertes sont bien gerés, et disymetriques, en tout cas sur ce debut de journée🙂
+mais evidemment si on multiplie les trades perdants, meme avec des pertes maitrisés, ca sera pas bon.
+
+
+Au dela de savoir si cette methode fonctionne dans toutes les config de marché,
+on a un souci sur le nombre de trades engagés, pas sur que binance acceptent cela...
+
+
+la seule solution, c'est d'etre plus qualitatif sur la selection des trades...
+
+
+ca va diminuer le nombre de trades perdants, et limiter le nombre de trade realisé.
+
+
+bon apriori 5 points en 5 mn, ca caractérise bien la courbe (a voir si  adapte le systeme en fonction de l'intervalle analysé)
+
+
+
+
+donc deux nouvelles methodes
+
+
+on devrait ecremer un paque de signal, et diminuer le nombre de trade du coup, sans doute 4 fois moins ? c'est le but...
+genre 30 trades par jour, ca parait pas trop délirant.
+
+
+
+
+a creuser, de tres bon resultats hier, moins bon ce matin, bcp trop de trade.
+
+
+il me faut un outil d'analyser ? excel ou sql suffit ?  un peu de bi ca serait pas mal.
+
+
+la je dois cumuler et comparer des choses, une requete sql peux suffire.
+
+
+jour par jour,
+afin de faire resortir une methode qui a cette disymetrie et peu de trade.
+
+
+
+
+deja c'est pas mal ca
+select
+CONVERT(DATE, DateHeureDebut) DateDebut,
+CodeMethodeTriggerTrade,
+CodeMethodeSuivi,
+CodeMethodeSortie,
+(select count(*) from  TradeSet TDC
+where gain>0 and statut='CLOSE'
+and tdc.CodeMethodeTriggerTrade=td.CodeMethodeTriggerTrade
+and tdc.CodeMethodeSuivi=td.CodeMethodeSuivi
+and tdc.CodeMethodeSortie=td.CodeMethodeSortie
+and CONVERT(DATE, TD.DateHeureDebut) =CONVERT(DATE, TDC.DateHeureDebut)
+) as trade_gagnant,
+(select count(*) from  TradeSet TDC
+where perte>0 and statut='CLOSE'
+and tdc.CodeMethodeTriggerTrade=td.CodeMethodeTriggerTrade
+and tdc.CodeMethodeSuivi=td.CodeMethodeSuivi
+and tdc.CodeMethodeSortie=td.CodeMethodeSortie
+and CONVERT(DATE, TD.DateHeureDebut) =CONVERT(DATE, TDC.DateHeureDebut)
+) as trade_perdant,
+(select count(*) from  TradeSet TDC
+where statut='CLOSE'
+and tdc.CodeMethodeTriggerTrade=td.CodeMethodeTriggerTrade
+and tdc.CodeMethodeSuivi=td.CodeMethodeSuivi
+and tdc.CodeMethodeSortie=td.CodeMethodeSortie
+and CONVERT(DATE, TD.DateHeureDebut) =CONVERT(DATE, TDC.DateHeureDebut)
+) as trade_total,
+
+
+sum(gain) gain ,sum(perte) perte ,sum(gain-perte) resultat
+from TradeSet TD
+where
+statut='CLOSE'
+and CodeMethodeSortie='STANDARD'
+group by
+CONVERT(DATE, DateHeureDebut),
+CodeMethodeTriggerTrade,CodeMethodeSuivi,CodeMethodeSortie
+order by
+CONVERT(DATE, DateHeureDebut) ,
+CodeMethodeTriggerTrade,CodeMethodeSuivi,CodeMethodeSortie
+
+
+
+
+
+
+ajouter de l'ecrémage sur la selection
+
+
+la volumetrie et la volatilité, pour eviter
+
+
+
+
+se pencher sur la tronche des bougies (epaisseur, type croix etc. ce que cela signife, comme présage)
+
+
+comment utiliser les bandes de bollinger pour ameliorer la proba de bonnes tendances.
+
+
+si la bande haute de bolling est franchi vers le haut c'est plutot bon non ?, deja la moyenne c'est bon
+
+
+recuperer les valeurs de la bande de bollinger codage, plus propre avvec decoupage recup et stockage peut etre ? nomd des fonctions surtout.
+
+
+
+
+le truc c'est qu'une valeur n'indique pas la tendance... une valeur au dessus de la bande de bollinger up, ok deja c'est un break out, mais on ne sais rien du contexte qui a precedé (resserment par exemple)
+
+
+
+
+
+
+Bon on pourrait aussi imaginer, jouer le rebond sur la bande de bollinger inferieure, mais comment eviter les faux signaux en cas de crash ??? avec les autres signaux ca fonctionne ??
+
+
+on peux tester, prise de position sur la bande de bollinger (au dessus), avec les autres signaux ? mais dans quel interval ???
+a quelle distance ? x % de la valeur j'imagine ?
+bcp de faux signaux la,
+sans doute il faut rentrer dans l'analyse des bougies. pas assez d'info la dessus.
+
+
+
+
+pour les analyses, le biais c'est que parfois les trades demarre un jour et finisse le lendemain...
+bon ca se lisse surement.
+
+
+MSSQL::/_LocalDB__MSSQLLocalDB/C__USERS_AMARYP_DOCUMENTS_VTBI_BDD.MDF/True/SqlTable/dbo.Table_1.sql
+
+
+
+
+
+
+
+
+interessant les stats cumulé sur x jours...
+
+
+select
+MethodeEntreeTrade,
+MethodeSuivi,
+MethodeSortie,
+sum(trade_gagnant) as trade_gagnant,
+sum(trade_perdant) as trade_perdant,
+sum(trade_total) trade_total,
+sum(gain) gain,
+sum(perte) perte,
+sum(resultat) resultat
+from dbo.TableResultat2
+group by
+MethodeEntreeTrade,
+MethodeSuivi,
+MethodeSortie
+
+
+30/06/2021
+
+
+
+
+
+technique pour proteger le capital en cas de probleme sur l'exe, ou le passage d'ordre.
+
+
+juste apres la  validation de l'achat, on passe un ordre de type stop loss au seuil calculé.
+
+
+on le passe potentiellement au seuil suivant,
+
+
+mais l'ensemble du suivi de tendance, s'effectue en mode piloté.
+
+
+ainsi en cas de souci, on perds la plus value (sauf cas extreme... type on a pu annuler l'ordre de protection, mais pas pu passer l'ordre de vente...bon...ca reduit le risque),
+on conserver le capital.
+par ailleurs, cela permet de passer sous les controles automatiques de binance, on va pas annuler des ordres en masse.
+puisque le suivi de tendance, s'effectue en mode piloté.
+
+
+
+
+
+
+flute plantage de l'exe ce matin
+
+
+a priori lié a l'ouverture de session sur le pc lui meme...
+
+
+bon le trade est perdant, pas grave, mais a priori les criteres d'entrée ne semblent pas avoir été respecté.... pas de franchissement a la hausse de la BBUP..a creuser
+sinon la suite ca sera le volume d'achat (bougie ?)
+
+
+la il faut laisser tourner pour avoir plus de data, test, pas la peine de rentrée dans des theories.
+par contre on a bien un biais empirique sur le fait qu'on cherche des trades sur 15m et 1h, mais par contre on analyse tendance RSI sur les 15 m uniquement.
+
+
+message erreur
+
+
+Consultez la fin de ce message pour plus de détails sur l'appel du débogage
+juste-à-temps (JIT) à la place de cette boîte de dialogue.
+
+
+************** Texte de l'exception **************
+Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: B. Path '', line 0, position 0.
+  à Newtonsoft.Json.JsonTextReader.ParseValue()
+  à Newtonsoft.Json.JsonTextReader.Read()
+  à Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+  à Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+  à Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+  à Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+  à Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+  à Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
+  à WindowsFormsApp1.Form1.button3_Click(Object sender, EventArgs e) dans C:\Users\amaryp\source\repos\WindowsFormsApp_VTBI\WindowsFormsApp1\Form1.cs:ligne 779
+  à System.Windows.Forms.Control.OnClick(EventArgs e)
+  à System.Windows.Forms.Button.OnClick(EventArgs e)
+  à System.Windows.Forms.Button.OnMouseUp(MouseEventArgs mevent)
+  à System.Windows.Forms.Control.WmMouseUp(Message& m, MouseButtons button, Int32 clicks)
+  à System.Windows.Forms.Control.WndProc(Message& m)
+  à System.Windows.Forms.ButtonBase.WndProc(Message& m)
+  à System.Windows.Forms.Button.WndProc(Message& m)
+  à System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+  à System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+  à System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+
+
+
+
+************** Assemblys chargés **************
+mscorlib
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4300.0 built by: NET48REL1LAST_C
+    CodeBase : file:///C:/Windows/Microsoft.NET/Framework/v4.0.30319/mscorlib.dll
+----------------------------------------
+WindowsFormsApp1
+    Version de l'assembly : 1.0.0.0
+    Version Win32 : 1.0.0.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/WindowsFormsApp1.exe
+----------------------------------------
+System.Windows.Forms
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4270.0 built by: NET48REL1LAST_C
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Windows.Forms/v4.0_4.0.0.0__b77a5c561934e089/System.Windows.Forms.dll
+----------------------------------------
+System
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4300.0 built by: NET48REL1LAST_C
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System/v4.0_4.0.0.0__b77a5c561934e089/System.dll
+----------------------------------------
+System.Drawing
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Drawing/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Drawing.dll
+----------------------------------------
+Google.Apis.Sheets.v4
+    Version de l'assembly : 1.49.0.2051
+    Version Win32 : 1.49.0.2051
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/Google.Apis.Sheets.v4.DLL
+----------------------------------------
+Google.Apis
+    Version de l'assembly : 1.49.0.0
+    Version Win32 : 1.49.0.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/Google.Apis.DLL
+----------------------------------------
+Google.Apis.Core
+    Version de l'assembly : 1.49.0.0
+    Version Win32 : 1.49.0.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/Google.Apis.Core.DLL
+----------------------------------------
+Google.Apis.Calendar.v3
+    Version de l'assembly : 1.49.0.2069
+    Version Win32 : 1.49.0.2069
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/Google.Apis.Calendar.v3.DLL
+----------------------------------------
+System.Configuration
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4190.0 built by: NET48REL1LAST_B
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Configuration/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Configuration.dll
+----------------------------------------
+System.Core
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4320.0 built by: NET48REL1LAST_C
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Core/v4.0_4.0.0.0__b77a5c561934e089/System.Core.dll
+----------------------------------------
+Binance.Net
+    Version de l'assembly : 6.13.0.0
+    Version Win32 : 6.13.3
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/Binance.Net.DLL
+----------------------------------------
+CryptoExchange.Net
+    Version de l'assembly : 3.9.0.0
+    Version Win32 : 3.9.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/CryptoExchange.Net.DLL
+----------------------------------------
+netstandard
+    Version de l'assembly : 2.0.0.0
+    Version Win32 : 4.8.4084.0
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/netstandard/v4.0_2.0.0.0__cc7b13ffcd2ddd51/netstandard.dll
+----------------------------------------
+Newtonsoft.Json
+    Version de l'assembly : 12.0.0.0
+    Version Win32 : 12.0.3.23909
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/Newtonsoft.Json.DLL
+----------------------------------------
+System.Xml
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xml/v4.0_4.0.0.0__b77a5c561934e089/System.Xml.dll
+----------------------------------------
+Google.Apis.Auth
+    Version de l'assembly : 1.49.0.0
+    Version Win32 : 1.49.0.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/Google.Apis.Auth.DLL
+----------------------------------------
+System.Net.Http
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Net.Http/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Net.Http.dll
+----------------------------------------
+System.Numerics
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Numerics/v4.0_4.0.0.0__b77a5c561934e089/System.Numerics.dll
+----------------------------------------
+System.Runtime.Serialization
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4250.0 built by: NET48REL1LAST_C
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Runtime.Serialization/v4.0_4.0.0.0__b77a5c561934e089/System.Runtime.Serialization.dll
+----------------------------------------
+System.Data
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4270.0 built by: NET48REL1LAST_C
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/System.Data/v4.0_4.0.0.0__b77a5c561934e089/System.Data.dll
+----------------------------------------
+Accessibility
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Accessibility/v4.0_4.0.0.0__b03f5f7f11d50a3a/Accessibility.dll
+----------------------------------------
+RestSharp
+    Version de l'assembly : 106.11.4.0
+    Version Win32 : 106.11.4
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/RestSharp.DLL
+----------------------------------------
+EntityFramework
+    Version de l'assembly : 6.0.0.0
+    Version Win32 : 6.2.61023.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/EntityFramework.DLL
+----------------------------------------
+System.Web
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4330.0 built by: NET48REL1LAST_B
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/System.Web/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Web.dll
+----------------------------------------
+EntityFramework.SqlServer
+    Version de l'assembly : 6.0.0.0
+    Version Win32 : 6.2.61023.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/EntityFramework.SqlServer.DLL
+----------------------------------------
+Anonymously Hosted DynamicMethods Assembly
+    Version de l'assembly : 0.0.0.0
+    Version Win32 : 4.8.4300.0 built by: NET48REL1LAST_C
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/mscorlib/v4.0_4.0.0.0__b77a5c561934e089/mscorlib.dll
+----------------------------------------
+Microsoft.CSharp
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.CSharp/v4.0_4.0.0.0__b03f5f7f11d50a3a/Microsoft.CSharp.dll
+----------------------------------------
+System.Dynamic
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Dynamic/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Dynamic.dll
+----------------------------------------
+Microsoft.CSharp.resources
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.CSharp.resources/v4.0_4.0.0.0_fr_b03f5f7f11d50a3a/Microsoft.CSharp.resources.dll
+----------------------------------------
+System.Data.OracleClient
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/System.Data.OracleClient/v4.0_4.0.0.0__b77a5c561934e089/System.Data.OracleClient.dll
+----------------------------------------
+System.Data.resources
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Data.resources/v4.0_4.0.0.0_fr_b77a5c561934e089/System.Data.resources.dll
+----------------------------------------
+System.Transactions
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/System.Transactions/v4.0_4.0.0.0__b77a5c561934e089/System.Transactions.dll
+----------------------------------------
+System.Xml.Linq
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xml.Linq/v4.0_4.0.0.0__b77a5c561934e089/System.Xml.Linq.dll
+----------------------------------------
+System.xml.resources
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xml.resources/v4.0_4.0.0.0_fr_b77a5c561934e089/System.Xml.resources.dll
+----------------------------------------
+System.EnterpriseServices
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/System.EnterpriseServices/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.EnterpriseServices.dll
+----------------------------------------
+EntityFramework.resources
+    Version de l'assembly : 6.0.0.0
+    Version Win32 : 6.2.61023.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/fr/EntityFramework.resources.DLL
+----------------------------------------
+System.Runtime.Caching
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Runtime.Caching/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Runtime.Caching.dll
+----------------------------------------
+System.ComponentModel.DataAnnotations
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.ComponentModel.DataAnnotations/v4.0_4.0.0.0__31bf3856ad364e35/System.ComponentModel.DataAnnotations.dll
+----------------------------------------
+EntityFrameworkDynamicProxies-WindowsFormsApp1
+    Version de l'assembly : 1.0.0.0
+    Version Win32 : 6.2.61023.0
+    CodeBase : file:///C:/Users/amaryp/source/repos/WindowsFormsApp_VTBI/WindowsFormsApp1/bin/Debug/EntityFramework.dll
+----------------------------------------
+mscorlib.resources
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/mscorlib.resources/v4.0_4.0.0.0_fr_b77a5c561934e089/mscorlib.resources.dll
+----------------------------------------
+System.resources
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.resources/v4.0_4.0.0.0_fr_b77a5c561934e089/System.resources.dll
+----------------------------------------
+System.Windows.Forms.resources
+    Version de l'assembly : 4.0.0.0
+    Version Win32 : 4.8.4084.0 built by: NET48REL1
+    CodeBase : file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Windows.Forms.resources/v4.0_4.0.0.0_fr_b77a5c561934e089/System.Windows.Forms.resources.dll
+----------------------------------------
+
+
+************** Débogage JIT **************
+Pour activer le débogage juste-à-temps (JIT), le fichier de configuration pour cette
+application ou cet ordinateur (machine.config) doit avoir la valeur
+jitDebugging définie dans la section system.windows.forms.
+L'application doit également être compilée avec le débogage
+activé.
+
+
+Par exemple :
+
+
+<configuration>
+    <system.windows.forms jitDebugging="true" />
+</configuration>
+
+
+Lorsque le débogage juste-à-temps est activé, les exceptions non gérées
+seront envoyées au débogueur JIT inscrit sur l'ordinateur
+plutôt que d'être gérées par cette boîte de dialogue.
+
+
+
+01/07/2021
+
+vtbi   
+
+
+requete de stat
+
+
+--SET IDENTITY_INSERT dbo.TableResultat OFF; 
+--GO 
+
+
+delete from dbo.TableResultat2;
+go
+insert into dbo.TableResultat2 (
+
+
+--[Id] INT NOT NULL PRIMARY KEY,
+--id,
+    [DateTrade] ,
+    [MethodeEntreeTrade] ,
+    [MethodeSuivi] ,
+    [MethodeSortie] ,
+    [trade_gagnant] ,
+    [trade_perdant] ,
+    [trade_total] ,
+    [gain] ,
+    [perte]  ,
+    [resultat]
+    )
+
+
+select
+--distinct(id),
+CONVERT(DATE, DateHeureDebut) DateDebut,
+CodeMethodeTriggerTrade as  CodeMethodeEntreeTrade,
+CodeMethodeSuivi,
+CodeMethodeSortie,
+(select count(*) from  TradeSet TDC
+where gain>0 and statut='CLOSE'
+and tdc.CodeMethodeTriggerTrade=td.CodeMethodeTriggerTrade
+and tdc.CodeMethodeSuivi=td.CodeMethodeSuivi
+and tdc.CodeMethodeSortie=td.CodeMethodeSortie
+and CONVERT(DATE, TD.DateHeureDebut) =CONVERT(DATE, TDC.DateHeureDebut)
+) as trade_gagnant,
+(select count(*) from  TradeSet TDC
+where perte>0 and statut='CLOSE'
+and tdc.CodeMethodeTriggerTrade=td.CodeMethodeTriggerTrade
+and tdc.CodeMethodeSuivi=td.CodeMethodeSuivi
+and tdc.CodeMethodeSortie=td.CodeMethodeSortie
+and CONVERT(DATE, TD.DateHeureDebut) =CONVERT(DATE, TDC.DateHeureDebut)
+) as trade_perdant,
+(select count(*) from  TradeSet TDC
+where statut='CLOSE'
+and tdc.CodeMethodeTriggerTrade=td.CodeMethodeTriggerTrade
+and tdc.CodeMethodeSuivi=td.CodeMethodeSuivi
+and tdc.CodeMethodeSortie=td.CodeMethodeSortie
+and CONVERT(DATE, TD.DateHeureDebut) =CONVERT(DATE, TDC.DateHeureDebut)
+) as trade_total,
+--sum(gain) gain ,sum(perte) perte ,sum(gain-perte) resultat
+CONVERT(DECIMAL(10,2),sum(gain)) as gain,
+CONVERT(DECIMAL(10,2),sum(perte)) as perte,
+CONVERT(DECIMAL(10,2),sum(gain-perte)) as resultat
+--,sum(perte) perte ,sum(gain-perte) resultat
+from TradeSet TD
+where
+statut='CLOSE'
+---and CodeMethodeSortie='STANDARD'
+--and CodeMethodeTriggerTrade='NEW7'
+--and CodeMethodeSuivi='STANDARD'
+group by
+--id,
+CONVERT(DATE, DateHeureDebut),
+CodeMethodeTriggerTrade,CodeMethodeSuivi,CodeMethodeSortie
+order by
+CONVERT(DATE, DateHeureDebut) ,
+CodeMethodeTriggerTrade,CodeMethodeSuivi,CodeMethodeSortie
+
+
+pour purger et recharger la stat
+
+
+puis
+
+
+cumul par methode, tous les jours confondus.
+
+
+peut etre la aussi moyenné par jour
+
+
+un KPI interessant : le ratio gain/nombre de trade
+G/nombre de trade
+
+
+ensuite classer avec le nombre de trade total
+
+
+
+
+ok, il y avait un bug, du coup pas de trade type new8, c'est réglé maintenant.
+
+
+l'idée c'est d'avoir moins de trades dans l'absolu et plus de trades tres negatifs.
+
+
+mais quand meme des trades🙂
+
+
+faut laisser tourner le machin.
+
+
+
+
+et regler le probleme du cas d'un actif >1000, ca ne respecte pas le money management.
+
+
+les deux trades auraient pu etre bien meilleurs en plus, je n'ai pris qu'un bout de la plue value, mais c'est le jeu, on prends une part de la tendance.
+
+
+
+
+ensuite potentiellement la volatilité/volumetrie pour eviter les trades bloqués longtemps.
+
+
+
+
+On pourra eventuellement améliorer la chose, en transformant la zone de bande superieur avec une fourchette, en approche quoi +
+un eloignement des bandes de bollinger, histoire d'anticiper la sorte par le haut, afin de tenter de prendre le train plus tot (si ca engendre pas de faux signaux)
+
+
+caracteriser un eloignement :
+backtrack des bandes de bollinger, puis etude > on constate l'eloignement  UP/DOWN
+
+
+
+
+ok, bon encore pas assez de data, mais la methode NEW8 semble prometteuse... 3 trades gagnants sur 3... donc peu de mauvais signaux, et bon rendement.
+pas assez de signaux, mais  finalement j'ai du corriger mon erreur vers 11h. on est meme pas sur 24h.
+a voir.
+la j'ai 4,4 % de rendement brut par jour (bon sur un jour), plus de rendement sur les autres methodes, mais avec bcp plus de trade.
+
+
+en prime trade, assez court, moins d'une heure.
+
+
+on laisse tourner
+
+
+si cela fonctionne, il faudra passer en mode réel.
+et donc coder le passage d'ordre, l'annulation d'ordre et la recuperation du portefeuille.
+sans doute, compiler l'exe et le figer pour laisser un bot tourner, versionning a mettre en place (le bug des actifs >1000 a eradiquer)
+
+
+faut il s'appuyer sur une autre table de trade ? genre stockage des trades reels magré tout a part ???
+
+
+vu que je vais continuer les tests.
+
+
+par ailleurs, je risque d'avoir un souci pour operer depuis le taf... pas envie de devoir laisser tourner un pc perso... hum...
+
+
+hebergement pc virtuel ? et oui ca semble logique.  comment gerer la base avec l'exe ? a creuser pour un premier deploiement.
+p
+
+
+utiliser l'offre azure pour deployer et tester l'appli , ca serait super ca non ?
+
+
+c'est l'objectif premier.
+
+
+si il y a peu de signaux, on peux augmenter le montant... cela fait peur en cas de flashcrash ou de plantage de l'outil.. pas dans un premier temps en tout cas...
+
+
+mais a terme potentiellement...
+si tu mets 10 000 dollars ben sur une base de 4,4 % brut... on fait 132 % par mois...
+
+
+
+
+donc en un mois tu doubles ton capital.
+
+
+
+
+passer a au moins 6 decimals : c'est bien ca, 6 decimals.  => fait.. assez lourd, j'ai du refaire certaines tables, supprimer des données etc., modifier du code, mais c'est fait.
+
+
+
+
+probleme le quantité minimum est parfois de zero...
+
+
+bon pour le moment, c'est 4% ... sur un peu plus de 24h, je suis a 124 euros,  on est plus proche des 6 % la.
+
+
+clairement effectué avec 5000 euros de disponible.
+
+
+effectué avec 5000 euros dispo, c'a donne du 2.48 % (mais en absolument c'est tres tres bon).
+
+
+avec 10 000 dispo ca donne 248 euros... par jour, ca doit representer plus que mon salaire net ca🙂
+
+
+x30 jour.
+7440 euros... gloubs
+meme apres impot c'est plus que mon salaire il me semble.
+
+
+
+
+
+
+ok on
+
+
+
+
+bizarre ce trade vendu a la moitie de la valeur.
+c'etait pendant la phase de transition.
+ou alros donné erroné coté api ?
+
+
+un ordre de vente declenché au marché devrait eviter l'erreur,
+ou alors confirmation de la valeur sur l'api binance dans le cas d'une vente ou d'un achat du reste ?
+
+
+ok, il y a deja des connaissances de patterns ,
+
+
+exemple doji star , soit dans le présent soit dans le passé.  valeur = 100 doji star, =0 pas doji star
+
+
+il faut trouver les traductions, toute la reconnaissance des patterns est deja fait, bcp plus simple donc.
+de confirmer les signaux avec ca, ou de developper une methode avec les signaux deja en place.
+BB, RSI, Price Direction.
+
+
+
+
+13/07/2021
+
+Mzthode
+
+
+Marteau + marteau inversé
+Proche bb down ?
+
+
+Surtout avec le rsi14 bien placé
+
+
+Moins de 30.
+Ca peut etre tres tres bien
+
+
+il faut mettre sous forme ecrite ce genre de chose,
+meme les bouquins ne sont pas clairs sur cela.
+
+
+la notion de marteau est lié a la tendance precedente, donc..; la donnée fournie prends elle cela en compte, au faut il l'effectuer soi meme ?
+
+
+faire un glossaire de traduction des termes, les livres sont en francais et la description sur taapio en anglais.
+etoile du matin doji
+doit etre confirmé par une bougie verte puissante juste apres ?
+=> donc cela revient a detecter une etoiledumatin a deux intervals en arriere, et a valider si la derniere bougie est bien verte ? whynot
+par contre le RSI apporte une forme de validation peut etre (RS5>RSI14 et RSI14 <30) ? ou cela annule tous les cas ?
+
+
+c'est assez pertinent de tester etoile du matin plus rsi5>rs14<30 donc. sans tester la derniere bougie
+
+
+sur le graph, etoiledumatindoji+bougie haussiere, confirme bien une tres grosse tendance haussiere...
+comment identifier une bougie haussiere ?
+
+
+
+
+morningdojistar + tendance haussiere forte sur le RSI5 par exemple c'est pas mal ca ? ca remplace sans doute l'analyse de la bougie suivante.
+juste a tester quoi
+
+
+ok, ca detecte bien le signal, par contre typiquement il est allé tapé sur la bande de bollinger superieur.. bref il etait a proximité🙂 en dessous, c'est pas bon ca ...
+
+
+soit proche de BBDown ok BBMID, mais proche BBUP, il faut ecarter ce signal. comment prendre en compte cela : a quel moment peux on estimer qu'on est proche du BB UP ? ou du down ?
+
+
+en % ?
+
+
+70 % du temps on rebondit sur les bandes.
+
+
+on peux filtrer sous la bande MID ? voir l'impact, si ca ecreme deja des trades perdants ou trop risqué ?
+
+
+j'ai encore ajouté d'autre methodes, a voir par gros temps, petit temps, euphorie
+
+
+si j'arrive a identifier quelques methodes qui fonctionnent, je peux aussi les faire cohabiter, pour avoir des trades plus regulier.
+l'idée c'est d'en avoir une ou deux qui marche, meme un peu et la mettre en route, en réel.
+
+
+avant de poursuivre l'amélioration des methodes.
+
+
+faut que ca se concretise.
+
+
+la je suis a 0.38 % brut  jour avec ces deux methodes.
+en fait c'est deja enorme.
+
+
+ca fait du 11.4 % mois.
+
+
+pour en vivre, il faudrait mettre effectivement 50000 euros de cash...
+ca fait bcp🙂
+ca fait du 5000 brut, grosso modo -30%  3500 euros net (mon salaire ou presque)...
+
+
+c'est deja une base...
+surtout que encore une fois, on parle d'un systeme automatique.
+
+
+
+
+ok, donc bon recuperer le code de connextion tester.
+
+
+et implementer pour passer des ordres en mode test.
+déjà si le retour de binance valide le truc c'est une premiere etape.
+Ensuite il faudra passer un ordre en réeel (avec un montant en dur faible), pas possible de faire l'impasse sur cela.
+sur des signaux selectionnés déjà tant qu'a faire.
+et assurer la vente ensuite.
+puis confirmation, et recuperation des frais par exemple, et des prix de vente réel.
+
+
+a priori il y a bien une figure typique sur le
+
+
+la bougie rouge contenu dans la bougie verte, pile sur la ligne de BBDOWN
+
+
+c'st une figure reconnaissable ca. revoir dans le livre . ca porte un nom precis.
+
+
+
+
+
+
+
+
+
+
+
+
+c'est lancé, il faudra sans doute que j'adapte l'interval sur la forte hausse, que je le mets en variable...
+
+
+
+
+
+
+réorganisation du code ?   une unité pour les methodes ca serait pas mal.
+une pour les signaux
+
+
+une pour gerer les ordres en mode réel .
+
+
+comment figer un peu le code dans une version ?  avec github et le versionning.
+
+
+il y a toujours les methodes a creuser, mais la mise en place de l'analyse des bougies a l'air assez complexe quand meme, enfin il faut y reflechir un peu.
+
+
+bon ,pas brillant ces methodes...aucune des nouvelles dans le vert... ou si peu, rapporter aux nombres de trades...
+
+
+methode tradi3 fonctionne encore, mais bcp moins bien.
+
+
+cette methode la, n'a pas engendré de trade (soit inefficace, soit bonne ecremage... avoir dans le temps)
+
+
+MORNDOJISTAR_RSI5BIGUP_RSI14S30SOUSBBMID
+
+
+en tout cas, pour le moment, bcp de faux signaux passent, anneantissant les resultats des trades gagnants.
+
+
+il faut améliorer le truc , voir ce qui s'est passé, ce que je peux améliorer pour qualifier le signal...
+
+
+j'utilise mal la bande BB mid. je teste l'inverse sur deux autres methodes.
+faut attendre l'approche de la bande down,
+ou le franchissement a la hausse de la BBmid, mais en dessous, c'est pas signifiant.
+
+
+il va falloir mettre en place, celle sur le rebond du BBdown, c'est la seul que je n'ai pas fait explicitement avec le bande de bb down...
+
+
+c'est fait.
+
+
+autre methode
+
+
+une fois le break out averé (prix > a bbup + un differentiel, + un gros bigup,  alors sans doute un bon run ? ca se tente pour voir ce que cela donne, il faudrait que le volum y soit ? via le RSI ?
+j'utilise plus la bougie dans ce cas la ?
+
+
+
+
+
+
+nouvelle methode
+RSI au dessus de 50 .(pas plus haut que 60 ?)
+RSI croissant sur les 5 dernieres minutes (peut etre un taux de croissance minimum ?)
+il fautdra sans doute ajouter un signal supplementaire, mais a tester dans un premier temps
+
+
+hum... un truc a faire quand le rsi revient sur la ligne de moyenne, donc il faut jouer entre le rsi a tres court terme et un plus long terme c'est ca ?
+
+
+
+
+Rsi touche la bb down + avalement haussier : a coder.
+
+
+figure avalement haussier
+AValHaussier_RSI5BIGUP_PRICESOUSBBMID
+
+
+sans doute positionner le price plutot meme sous la moyenne entre bbmid et bbddown
+c'est fait.
+
+
+if (prix < ((Monsignal1.BB_UP + Monsignal1.BB_MID) / 2))
+
+
+
+
+une methode mis en place hier matin :  MORDOJISTA_RSI5BIGUPSBBDOWNMOINS
+a produit deux tres a gain.
+
+
+a suivre, mais on peux esperer que le nombre de cas traqué, est tres rare et tres qualitatif, gains peu frequent, perte rare... il suffit alors de chercher a traquer d'autre cas, et a laisser ces methodes en place pour petit a petit produire leurs effets.
+
+
+on va voir celle avec l'avalement haussier .
+a mettre en place, celle avec le marteau inversé.
+
+
+parfois les bandes de bollinger sont confondus ??? resserement extreme... on doit ecarte forcement ce cas la.
+
+
+
+
+avec calcul des frais,
+les seules methodes qui ont produit des gains sont pour le moment :
+
+
+MORDOJISTA_RSI5BIGUPSBBDOWNMOINS
+
+
+MORNDOJISTAR_RSI30
+
+
+
+
+pas brillant,
+
+
+peut etre que la clé est maintenant dans le suivi du trade ? si je laisse pas assez respiré, les quelques trades gagnants tres fort, ne permettent pas d'aller si loin
+
+
+certains ne se sont jamais declenché encore.
+
+
+encore quelques figures identifiables a coder, (marteaux inversés par exemple).
+l'idée c'est toujours, identifier un pattern de retournement de tendance, proche de la bande de bollinger basse (et big up rsi par exemple) :
+
+
+l'autre piste, c'est etudier les trades generés, et voir comment eviter les trades perdants, en ajoutant des conditions supplémentaires pour tenter d'eliminer ces entrées en trade la
+
+
+
+
+faire la meme chose, avec une morning star classique
+et marteau inversée
+
+
+
+
+affaire a suivre, invertedhammer semble donner des resultats equivalents au hammer, mais justement en filtrant les mauvais signaux... bon un seul trade pour le moment, donc impossible de conclure
+mais sur une periode ou le hammer a enchainé les pertes.
+
+
+pour le moment j'ai quelques methodes qui amene de vrais plus value (peu).
+on est sur une periode de temps assez courte. =24h ?  si on ecarte, le loufoque avalementhaussier (39 trades pour 2 euros de gains )
+on aurais en l'etat  49 euros de gains net de frais. c'est pas si mauvais, si ca se confirme dans la durée
+
+
+on est presque au 1% net par jour la il me semble ? vu que le capital investi est de 5000 euros
+
+
+apres les désillusions, un petit espoir ?
+
+
+je vais couper le systeme sur interval 1 h.
+ca ralentira moins le systeme, et la plupart des trades semble avoir été fait sur 15mn.
+et je pourrais investiguer plus facilement, pour essayer d'améliorer le filtrage des signaux.
+
+
+ok c'est fait, uniquement sur 15 mn, ca devrait couper les pertes plus rapidement. on va voir l'impact sur les opportunités... tant pis.
+
+
+bon le souci, c'est que la lenteur du systeme, engendre des pertes plus importantes, le scan est pas assez rapide pour le suivi des trades.
+
+
+developpé un module qui vient scanner ?
+
+
+accelerer en optimisant le code ? ==> regrouper les filtres des patterns vu que les contextes sont les meme, ca limiterais les appels.
+
+
+passer en mode 20 appels secondes ?
+
+
+desactiver certaines methodes ?
+
+
+pour maximiser les trades gagnants, il va fallloir optimiser le suivi, lacher du lest sur le suivi de tendance en cas de home run
+laisser la valeur respirer en s'eloignant progressivement (en %) de la valeur haute, la c'est 1/2 %, c'est trop proche.
+
+
+il faudra tester cela...
+grosse maille. peut etre juste des jalons, si la valeur a pris x % alors on s'eloigne d'un 1 point de % par exemple
+
+
+
+
+en terme de scan, il doit bien mettre 2 minutes a faire le tour.
+le suivi des trades devraient alors etre dissocié et fait en parallele. clairement
+
+
+ca va pas suffire le scan est nettement trop lent la...
+
+
+a creuser.
+
+
+
+
+
+
+bon l'idée, finalement c'est d'identifier des methodes dont le ratio trade gagnant, trade perdant est bon, peut importe si peu frequent.
+l'idée c'est d'avoir des trades qui se declenche dans les configurations de marché où ils sont pertinents, et pas le reste du temps.
+dès lors,  il suffit de continuer en parallele a chercher d'autres methodes.
+
+
+le inverted hammer (3 trades gagnants sur 3 ) et l 'autre : 8 trades gagnants sur 10
+semble se declencher tres rarement (donc le travail de conditions de marchés semble fonctionner).
+
+
+il y a la deux candidats a mettre en reel. (d'ici fin de semaine ? compliqué, pas mal de taf cette semaine, et apres ce sont les congés...je ne sais pas.)
+encore des elements de dev a mettre en place, notamment dans le suivi et les protections.
+en attendant, on les laisses tourner pour voir si leur  performances se confirment quelquesoit les typologies de marchés.
+
+
+c'est la feuille de route.
+
+
+esperons que ces deux methodes identifiants leur perf perdure.
+
+
+la elles rapporte des faibles montants, mais tout de meme ...
+116 euros net de frais en 5 jours.
+
+
+avec un capital immobilisé de :  5000 euros.
+on est loin du 1 % jour, mais pas si mal : 0.46 % jour
+
+
+sur un mois plein :  13.8 %
+
+
+165 % par an... sans benefice reinvesti
+
+
+si on imagine (je pense pas que je le ferai du jour au lendemain en tout cas...) : 50 000 euros =>230 euros par jour avant impot. (sur 30 jours hein)
+6900 euros par mois
+soit 4200 net d'impot mensuel... c'est plus que mon salaire la...
+
+
+Franchement a creuser, c'est vraiment POSSIBLE
+
+
+
+
+bon 5 trades gagnants sur 5...
+
+
+On peux aussi basculer sur des trades de 5000 dollars ? mais ca revient a devoir potentiellement mettre 25 000 euros a dispo...
+Hors de question pour le moment evidemment
+
+
+mettre en place un systeme d'arret si une methode engendre x trades perdants d'affiler.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+26/08/2021
+
+jeudi 26 aout
+
+
+point sur l'experience VTBI, il y a l'air d'avoir des elements interessant.
+
+
+
+
+archiver la stat.
+
+
+et analyse plus fine sur les methodes qui performent.
+
+
+
+
+taf pur
+
+
+
+
+
+
+
+
+
+14/01/2023
+
+Scalping
+
+
+Analyse chariste
+Rsi
+
+
+Il faut appliquer une méthode qui marche déjà et ne pas la chercher.
+
+
+Ensuite.
+Coder la solution. Soit c#, j ai déjà du code.
+
+
+Soit python
+
+
+Reprise d un abo api.
+
+
+Et mettre en test en simulation.
+
+
+Et si ça fonctionne on mets en marche en réel.
+
+
+
+
+
+
+
+

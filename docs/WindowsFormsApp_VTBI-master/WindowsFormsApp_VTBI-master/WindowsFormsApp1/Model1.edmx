@@ -1,0 +1,369 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Model1.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="Model1StoreContainer">
+    <EntitySet Name="EvenementSet" EntityType="Model1.Store.EvenementSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="EssaiSet" EntityType="Model1.Store.EssaiSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="SuiviValeurSet" EntityType="Model1.Store.SuiviValeurSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TradeSet" EntityType="Model1.Store.TradeSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="SuiviSignalSet" EntityType="Model1.Store.SuiviSignalSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MethodeSet" EntityType="Model1.Store.MethodeSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MethodeSuiviSet" EntityType="Model1.Store.MethodeSuiviSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MethodeSortieSet" EntityType="Model1.Store.MethodeSortieSet" store:Type="Tables" Schema="dbo" />
+  </EntityContainer>
+  <EntityType Name="EvenementSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Symbol" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="DateHeure" Type="datetime" Nullable="false" />
+    <Property Name="valeur" Type="decimal" Nullable="true" Precision="18" Scale="5" />
+    <Property Name="RSI14" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="RSI5" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="Eventlog" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="typeintervaltime" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="TypeOrder" Type="nvarchar(max)" Nullable="true" />
+  </EntityType>
+  <EntityType Name="EssaiSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nom" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SuiviValeurSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Symbol" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="DateHeure" Type="datetime" Nullable="false" />
+    <Property Name="valeur" Type="decimal" Nullable="true" Precision="18" Scale="5" />
+  </EntityType>
+  <EntityType Name="TradeSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Symbol" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="DateHeureDebut" Type="datetime" Nullable="false" />
+    <Property Name="DateHeureFin" Type="datetime" Nullable="true" />
+    <Property Name="ValeurAchat" Type="decimal" Nullable="true" Precision="18" Scale="5" />
+    <Property Name="ValeurVente" Type="decimal" Nullable="true" Precision="18" Scale="5" />
+    <Property Name="ValeurCourante" Type="decimal" Nullable="true" Precision="18" Scale="5" />
+    <Property Name="QuantiteAchat" Type="decimal" Nullable="true" Precision="18" Scale="0" />
+    <Property Name="QuantiteVente" Type="decimal" Nullable="true" Precision="18" Scale="0" />
+    <Property Name="Statut" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="ID_Exchange" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="FraisAchat" Type="decimal" Nullable="false" Scale="5" />
+    <Property Name="FraisVente" Type="decimal" Nullable="false" Scale="5" />
+    <Property Name="R0" Type="decimal" Nullable="true" Scale="5" />
+    <Property Name="R1" Type="decimal" Nullable="true" Scale="5" />
+    <Property Name="R2Trailling" Type="decimal" Nullable="true" Scale="5" />
+    <Property Name="R2" Type="decimal" Nullable="true" Scale="5" />
+    <Property Name="STOP_COURANT" Type="decimal" Nullable="true" Scale="5" />
+    <Property Name="Gain" Type="decimal" Nullable="true" Scale="5" />
+    <Property Name="Perte" Type="decimal" Nullable="true" Scale="5" />
+    <Property Name="CodeMethodeTriggerTrade" Type="nvarchar" Nullable="false" MaxLength="20" />
+    <Property Name="CodeMethodeSuivi" Type="nvarchar" Nullable="false" MaxLength="20" />
+    <Property Name="CodeMethodeSortie" Type="nvarchar" Nullable="false" MaxLength="20" />
+    <Property Name="TypeTrade" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SuiviSignalSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Symbol" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="DateHeure" Type="datetime" Nullable="false" />
+    <Property Name="Prix" Type="decimal" Nullable="true" Precision="18" Scale="5" />
+    <Property Name="RSI14" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="RSI5" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="PricedirectionBTC" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="PriceDirectionSymbol" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="Interval" Type="nvarchar(max)" Nullable="true" />
+  </EntityType>
+  <EntityType Name="MethodeSet">
+    <Key>
+      <PropertyRef Name="code_methode" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nom" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="description" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="code_methode" Type="nvarchar" Nullable="false" MaxLength="20" />
+  </EntityType>
+  <EntityType Name="MethodeSuiviSet">
+    <Key>
+      <PropertyRef Name="codemethodesuivi" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nom" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="description" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="codemethodesuivi" Type="nvarchar" Nullable="false" MaxLength="20" />
+  </EntityType>
+  <EntityType Name="MethodeSortieSet">
+    <Key>
+      <PropertyRef Name="codemethodesortie" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nom" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="description" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="codemethodesortie" Type="nvarchar" Nullable="false" MaxLength="20" />
+  </EntityType>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Model1" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="Model1Container" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="EvenementSet" EntityType="Model1.Evenement" />
+          <EntitySet Name="EssaiSet" EntityType="Model1.Essai" />
+          <EntitySet Name="SuiviValeurSet" EntityType="Model1.SuiviValeur" />
+          <EntitySet Name="TradeSet" EntityType="Model1.Trade" />
+          <EntitySet Name="SuiviSignalSet" EntityType="Model1.SuiviSignal" />
+          <EntitySet Name="MethodeSet" EntityType="Model1.Methode" />
+          <EntitySet Name="MethodeSuiviSet" EntityType="Model1.MethodeSuivi" />
+          <EntitySet Name="MethodeSortieSet" EntityType="Model1.MethodeSortie" />
+        </EntityContainer>
+        <EntityType Name="Evenement">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Symbol" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" Nullable="false" />
+          <Property Name="DateHeure" Type="DateTime" Precision="3" Nullable="false" />
+          <Property Name="valeur" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="RSI14" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="RSI5" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Eventlog" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="typeintervaltime" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="TypeOrder" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Essai">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int32" />
+          <Property Name="nom" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="SuiviValeur">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateHeure" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="valeur" Type="Decimal" Precision="18" Scale="5" />
+        </EntityType>
+        <EntityType Name="Trade">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateHeureDebut" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateHeureFin" Type="DateTime" Precision="3" Nullable="true" />
+          <Property Name="ValeurAchat" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="ValeurVente" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="ValeurCourante" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="QuantiteAchat" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="QuantiteVente" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Statut" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ID_Exchange" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FraisAchat" Type="Decimal" Nullable="false" Scale="5" />
+          <Property Name="FraisVente" Type="Decimal" Nullable="false" Scale="5" />
+          <Property Name="R0" Type="Decimal" Nullable="true" Scale="5" />
+          <Property Name="R1" Type="Decimal" Nullable="true" Scale="5" />
+          <Property Name="R2Trailling" Type="Decimal" Nullable="true" Scale="5" />
+          <Property Name="R2" Type="Decimal" Nullable="true" Scale="5" />
+          <Property Name="STOP_COURANT" Type="Decimal" Nullable="true" Scale="5" />
+          <Property Name="Gain" Type="Decimal" Nullable="true" Scale="5" />
+          <Property Name="Perte" Type="Decimal" Nullable="true" Scale="5" />
+          <Property Name="CodeMethodeTriggerTrade" Type="String" Nullable="false" MaxLength="20" />
+          <Property Name="CodeMethodeSuivi" Type="String" Nullable="false" MaxLength="20" />
+          <Property Name="CodeMethodeSortie" Type="String" Nullable="false" MaxLength="20" />
+          <Property Name="TypeTrade" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SuiviSignal">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateHeure" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Prix" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="RSI14" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="RSI5" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="PricedirectionBTC" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="PriceDirectionSymbol" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Interval" Type="String" />
+        </EntityType>
+        <EntityType Name="Methode">
+          <Key>
+            <PropertyRef Name="code_methode" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nom" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="description" Type="String" Nullable="false" />
+          <Property Name="code_methode" Type="String" Nullable="false" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="MethodeSuivi">
+          <Key>
+            <PropertyRef Name="codemethodesuivi" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nom" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="description" Type="String" Nullable="false" />
+          <Property Name="codemethodesuivi" Type="String" Nullable="false" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="MethodeSortie">
+          <Key>
+            <PropertyRef Name="codemethodesortie" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nom" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="description" Type="String" Nullable="false" />
+          <Property Name="codemethodesortie" Type="String" Nullable="false" MaxLength="20" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="Model1StoreContainer" CdmEntityContainer="Model1Container">
+    <EntitySetMapping Name="EvenementSet">
+      <EntityTypeMapping TypeName="IsTypeOf(Model1.Evenement)">
+        <MappingFragment StoreEntitySet="EvenementSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+          <ScalarProperty Name="DateHeure" ColumnName="DateHeure" />
+          <ScalarProperty Name="valeur" ColumnName="valeur" />
+          <ScalarProperty Name="RSI14" ColumnName="RSI14" />
+          <ScalarProperty Name="RSI5" ColumnName="RSI5" />
+          <ScalarProperty Name="Eventlog" ColumnName="Eventlog" />
+          <ScalarProperty Name="typeintervaltime" ColumnName="typeintervaltime" />
+          <ScalarProperty Name="TypeOrder" ColumnName="TypeOrder" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="EssaiSet">
+      <EntityTypeMapping TypeName="IsTypeOf(Model1.Essai)">
+        <MappingFragment StoreEntitySet="EssaiSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="nom" ColumnName="nom" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SuiviValeurSet">
+      <EntityTypeMapping TypeName="IsTypeOf(Model1.SuiviValeur)">
+        <MappingFragment StoreEntitySet="SuiviValeurSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+          <ScalarProperty Name="DateHeure" ColumnName="DateHeure" />
+          <ScalarProperty Name="valeur" ColumnName="valeur" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TradeSet">
+      <EntityTypeMapping TypeName="IsTypeOf(Model1.Trade)">
+        <MappingFragment StoreEntitySet="TradeSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+          <ScalarProperty Name="DateHeureDebut" ColumnName="DateHeureDebut" />
+          <ScalarProperty Name="DateHeureFin" ColumnName="DateHeureFin" />
+          <ScalarProperty Name="ValeurAchat" ColumnName="ValeurAchat" />
+          <ScalarProperty Name="ValeurVente" ColumnName="ValeurVente" />
+          <ScalarProperty Name="ValeurCourante" ColumnName="ValeurCourante" />
+          <ScalarProperty Name="QuantiteAchat" ColumnName="QuantiteAchat" />
+          <ScalarProperty Name="QuantiteVente" ColumnName="QuantiteVente" />
+          <ScalarProperty Name="Statut" ColumnName="Statut" />
+          <ScalarProperty Name="ID_Exchange" ColumnName="ID_Exchange" />
+          <ScalarProperty Name="FraisAchat" ColumnName="FraisAchat" />
+          <ScalarProperty Name="FraisVente" ColumnName="FraisVente" />
+          <ScalarProperty Name="R0" ColumnName="R0" />
+          <ScalarProperty Name="R1" ColumnName="R1" />
+          <ScalarProperty Name="R2Trailling" ColumnName="R2Trailling" />
+          <ScalarProperty Name="R2" ColumnName="R2" />
+          <ScalarProperty Name="STOP_COURANT" ColumnName="STOP_COURANT" />
+          <ScalarProperty Name="Gain" ColumnName="Gain" />
+          <ScalarProperty Name="Perte" ColumnName="Perte" />
+          <ScalarProperty Name="CodeMethodeTriggerTrade" ColumnName="CodeMethodeTriggerTrade" />
+          <ScalarProperty Name="CodeMethodeSuivi" ColumnName="CodeMethodeSuivi" />
+          <ScalarProperty Name="CodeMethodeSortie" ColumnName="CodeMethodeSortie" />
+          <ScalarProperty Name="TypeTrade" ColumnName="TypeTrade" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SuiviSignalSet">
+      <EntityTypeMapping TypeName="IsTypeOf(Model1.SuiviSignal)">
+        <MappingFragment StoreEntitySet="SuiviSignalSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+          <ScalarProperty Name="DateHeure" ColumnName="DateHeure" />
+          <ScalarProperty Name="Prix" ColumnName="Prix" />
+          <ScalarProperty Name="RSI14" ColumnName="RSI14" />
+          <ScalarProperty Name="RSI5" ColumnName="RSI5" />
+          <ScalarProperty Name="PricedirectionBTC" ColumnName="PricedirectionBTC" />
+          <ScalarProperty Name="PriceDirectionSymbol" ColumnName="PriceDirectionSymbol" />
+          <ScalarProperty Name="Interval" ColumnName="Interval" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MethodeSet">
+      <EntityTypeMapping TypeName="IsTypeOf(Model1.Methode)">
+        <MappingFragment StoreEntitySet="MethodeSet">
+          <ScalarProperty Name="code_methode" ColumnName="code_methode" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="nom" ColumnName="nom" />
+          <ScalarProperty Name="description" ColumnName="description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MethodeSuiviSet">
+      <EntityTypeMapping TypeName="IsTypeOf(Model1.MethodeSuivi)">
+        <MappingFragment StoreEntitySet="MethodeSuiviSet">
+          <ScalarProperty Name="codemethodesuivi" ColumnName="codemethodesuivi" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="nom" ColumnName="nom" />
+          <ScalarProperty Name="description" ColumnName="description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MethodeSortieSet">
+      <EntityTypeMapping TypeName="IsTypeOf(Model1.MethodeSortie)">
+        <MappingFragment StoreEntitySet="MethodeSortieSet">
+          <ScalarProperty Name="codemethodesortie" ColumnName="codemethodesortie" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="nom" ColumnName="nom" />
+          <ScalarProperty Name="description" ColumnName="description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Aucun" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

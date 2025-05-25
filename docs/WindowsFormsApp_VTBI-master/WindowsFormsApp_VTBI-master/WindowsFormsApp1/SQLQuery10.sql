@@ -1,0 +1,1 @@
+﻿select * from TradeSet where statut='OPEN'

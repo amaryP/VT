@@ -1,0 +1,306 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{E7930945-8F62-4C89-A026-B7D9BBCFD6A2}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>WindowsApplication</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>MAJAUTOASAP</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Fixture.cs" />
+    <Compile Include="WindowsFormsApp1\CelluleSheet.cs" />
+    <Compile Include="WindowsFormsApp1\Class1.cs" />
+    <Compile Include="WindowsFormsApp1\ColonnesClasseurChampionnat.cs" />
+    <Compile Include="WindowsFormsApp1\Fixture.cs" />
+    <Compile Include="WindowsFormsApp1\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsFormsApp1\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsFormsApp1\obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
+    <Compile Include="WindowsFormsApp1\Program.cs" />
+    <Compile Include="WindowsFormsApp1\Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowsFormsApp1\Properties\Resources.Designer.cs" />
+    <Compile Include="WindowsFormsApp1\Properties\Settings.Designer.cs" />
+    <Compile Include="WindowsFormsApp1\Teams.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".vs\WindowsFormsApp1\config\applicationhost.config" />
+    <None Include=".vs\WindowsFormsApp1\v16\.suo" />
+    <None Include="packages\Google.Apis.1.49.0\.signature.p7s" />
+    <None Include="packages\Google.Apis.1.49.0\Google.Apis.1.49.0.nupkg" />
+    <None Include="packages\Google.Apis.1.49.0\LICENSE" />
+    <None Include="packages\Google.Apis.Auth.1.49.0\.signature.p7s" />
+    <None Include="packages\Google.Apis.Auth.1.49.0\Google.Apis.Auth.1.49.0.nupkg" />
+    <None Include="packages\Google.Apis.Auth.1.49.0\LICENSE" />
+    <None Include="packages\Google.Apis.Core.1.49.0\.signature.p7s" />
+    <None Include="packages\Google.Apis.Core.1.49.0\Google.Apis.Core.1.49.0.nupkg" />
+    <None Include="packages\Google.Apis.Core.1.49.0\LICENSE" />
+    <None Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\.signature.p7s" />
+    <None Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\Google.Apis.Sheets.v4.1.49.0.2051.nupkg" />
+    <None Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\LICENSE" />
+    <None Include="packages\Newtonsoft.Json.12.0.3\.signature.p7s" />
+    <None Include="packages\Newtonsoft.Json.12.0.3\LICENSE.md" />
+    <None Include="packages\Newtonsoft.Json.12.0.3\Newtonsoft.Json.12.0.3.nupkg" />
+    <None Include="packages\old\Google.Apis.1.49.0\.signature.p7s" />
+    <None Include="packages\old\Google.Apis.1.49.0\Google.Apis.1.49.0.nupkg" />
+    <None Include="packages\old\Google.Apis.1.49.0\LICENSE" />
+    <None Include="packages\old\Google.Apis.Auth.1.49.0\.signature.p7s" />
+    <None Include="packages\old\Google.Apis.Auth.1.49.0\Google.Apis.Auth.1.49.0.nupkg" />
+    <None Include="packages\old\Google.Apis.Auth.1.49.0\LICENSE" />
+    <None Include="packages\old\Google.Apis.Core.1.49.0\.signature.p7s" />
+    <None Include="packages\old\Google.Apis.Core.1.49.0\Google.Apis.Core.1.49.0.nupkg" />
+    <None Include="packages\old\Google.Apis.Core.1.49.0\LICENSE" />
+    <None Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\.signature.p7s" />
+    <None Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\Google.Apis.Sheets.v4.1.49.0.2051.nupkg" />
+    <None Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\LICENSE" />
+    <None Include="packages\old\Newtonsoft.Json.12.0.3\.signature.p7s" />
+    <None Include="packages\old\Newtonsoft.Json.12.0.3\LICENSE.md" />
+    <None Include="packages\old\Newtonsoft.Json.12.0.3\Newtonsoft.Json.12.0.3.nupkg" />
+    <None Include="packages\RestSharp.106.11.4\.signature.p7s" />
+    <None Include="packages\RestSharp.106.11.4\RestSharp.106.11.4.nupkg" />
+    <None Include="WindowsFormsApp1\App.config" />
+    <None Include="WindowsFormsApp1\bin\Debug\credentials.json" />
+    <None Include="WindowsFormsApp1\bin\Debug\exportlistboxpasp.csv" />
+    <None Include="WindowsFormsApp1\bin\Debug\token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user" />
+    <None Include="WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe.config" />
+    <None Include="WindowsFormsApp1\obj\Debug\DesignTimeResolveAssemblyReferences.cache" />
+    <None Include="WindowsFormsApp1\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.CopyComplete" />
+    <None Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.CoreCompileInputs.cache" />
+    <None Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.GenerateResource.cache" />
+    <None Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csprojAssemblyReference.cache" />
+    <None Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe.config" />
+    <None Include="WindowsFormsApp1\packages.config" />
+    <None Include="WindowsFormsApp1\Properties\json1.json" />
+    <None Include="WindowsFormsApp1\Properties\Settings.settings" />
+    <None Include="WindowsFormsApp1\WindowsFormsApp1.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages\Google.Apis.1.49.0\lib\net45\Google.Apis.dll" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\net45\Google.Apis.pdb" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\net45\Google.Apis.PlatformServices.dll" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\net45\Google.Apis.xml" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\netstandard1.3\Google.Apis.dll" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\netstandard1.3\Google.Apis.pdb" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\netstandard1.3\Google.Apis.xml" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\netstandard2.0\Google.Apis.dll" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\netstandard2.0\Google.Apis.pdb" />
+    <Content Include="packages\Google.Apis.1.49.0\lib\netstandard2.0\Google.Apis.xml" />
+    <Content Include="packages\Google.Apis.1.49.0\NuGetIcon.png" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.dll" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.pdb" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.PlatformServices.dll" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.xml" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\netstandard1.3\Google.Apis.Auth.dll" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\netstandard1.3\Google.Apis.Auth.pdb" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\netstandard1.3\Google.Apis.Auth.PlatformServices.dll" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\netstandard1.3\Google.Apis.Auth.xml" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\netstandard2.0\Google.Apis.Auth.dll" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\netstandard2.0\Google.Apis.Auth.pdb" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\netstandard2.0\Google.Apis.Auth.PlatformServices.dll" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\lib\netstandard2.0\Google.Apis.Auth.xml" />
+    <Content Include="packages\Google.Apis.Auth.1.49.0\NuGetIcon.png" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\net45\Google.Apis.Core.dll" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\net45\Google.Apis.Core.pdb" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\net45\Google.Apis.Core.xml" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\netstandard1.3\Google.Apis.Core.dll" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\netstandard1.3\Google.Apis.Core.pdb" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\netstandard1.3\Google.Apis.Core.xml" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\netstandard2.0\Google.Apis.Core.dll" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\netstandard2.0\Google.Apis.Core.pdb" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\lib\netstandard2.0\Google.Apis.Core.xml" />
+    <Content Include="packages\Google.Apis.Core.1.49.0\NuGetIcon.png" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\net40\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\net40\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\net40\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\net45\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\net45\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\net45\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.0\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.0\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.0\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.3\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.3\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.3\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard2.0\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard2.0\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard2.0\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\net20\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\net20\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\net35\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\net35\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\netstandard1.0\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\netstandard1.0\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\netstandard1.3\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\netstandard1.3\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\netstandard2.0\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\netstandard2.0\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\portable-net40+sl5+win8+wp8+wpa81\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\portable-net40+sl5+win8+wp8+wpa81\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\portable-net45+win8+wp8+wpa81\Newtonsoft.Json.dll" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\lib\portable-net45+win8+wp8+wpa81\Newtonsoft.Json.xml" />
+    <Content Include="packages\Newtonsoft.Json.12.0.3\packageIcon.png" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\net45\Google.Apis.dll" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\net45\Google.Apis.pdb" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\net45\Google.Apis.PlatformServices.dll" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\net45\Google.Apis.xml" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\netstandard1.3\Google.Apis.dll" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\netstandard1.3\Google.Apis.pdb" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\netstandard1.3\Google.Apis.xml" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\netstandard2.0\Google.Apis.dll" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\netstandard2.0\Google.Apis.pdb" />
+    <Content Include="packages\old\Google.Apis.1.49.0\lib\netstandard2.0\Google.Apis.xml" />
+    <Content Include="packages\old\Google.Apis.1.49.0\NuGetIcon.png" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.dll" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.pdb" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.PlatformServices.dll" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\net45\Google.Apis.Auth.xml" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\netstandard1.3\Google.Apis.Auth.dll" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\netstandard1.3\Google.Apis.Auth.pdb" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\netstandard1.3\Google.Apis.Auth.PlatformServices.dll" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\netstandard1.3\Google.Apis.Auth.xml" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\netstandard2.0\Google.Apis.Auth.dll" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\netstandard2.0\Google.Apis.Auth.pdb" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\netstandard2.0\Google.Apis.Auth.PlatformServices.dll" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\lib\netstandard2.0\Google.Apis.Auth.xml" />
+    <Content Include="packages\old\Google.Apis.Auth.1.49.0\NuGetIcon.png" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\net45\Google.Apis.Core.dll" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\net45\Google.Apis.Core.pdb" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\net45\Google.Apis.Core.xml" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\netstandard1.3\Google.Apis.Core.dll" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\netstandard1.3\Google.Apis.Core.pdb" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\netstandard1.3\Google.Apis.Core.xml" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\netstandard2.0\Google.Apis.Core.dll" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\netstandard2.0\Google.Apis.Core.pdb" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\lib\netstandard2.0\Google.Apis.Core.xml" />
+    <Content Include="packages\old\Google.Apis.Core.1.49.0\NuGetIcon.png" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\net40\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\net40\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\net40\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\net45\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\net45\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\net45\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.0\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.0\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.0\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.3\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.3\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard1.3\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard2.0\Google.Apis.Sheets.v4.dll" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard2.0\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="packages\old\Google.Apis.Sheets.v4.1.49.0.2051\lib\netstandard2.0\Google.Apis.Sheets.v4.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\net20\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\net20\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\net35\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\net35\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\netstandard1.0\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\netstandard1.0\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\netstandard1.3\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\netstandard1.3\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\netstandard2.0\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\netstandard2.0\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\portable-net40+sl5+win8+wp8+wpa81\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\portable-net40+sl5+win8+wp8+wpa81\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\portable-net45+win8+wp8+wpa81\Newtonsoft.Json.dll" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\lib\portable-net45+win8+wp8+wpa81\Newtonsoft.Json.xml" />
+    <Content Include="packages\old\Newtonsoft.Json.12.0.3\packageIcon.png" />
+    <Content Include="packages\RestSharp.106.11.4\lib\net452\RestSharp.dll" />
+    <Content Include="packages\RestSharp.106.11.4\lib\net452\RestSharp.xml" />
+    <Content Include="packages\RestSharp.106.11.4\lib\netstandard2.0\RestSharp.dll" />
+    <Content Include="packages\RestSharp.106.11.4\lib\netstandard2.0\RestSharp.xml" />
+    <Content Include="packages\RestSharp.106.11.4\restsharp.png" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Auth.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Auth.pdb" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Auth.PlatformServices.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Auth.xml" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Core.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Core.pdb" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Core.xml" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.pdb" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.PlatformServices.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Sheets.v4.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Sheets.v4.pdb" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.Sheets.v4.xml" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Google.Apis.xml" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Newtonsoft.Json.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\Newtonsoft.Json.xml" />
+    <Content Include="WindowsFormsApp1\bin\Debug\RestSharp.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\RestSharp.xml" />
+    <Content Include="WindowsFormsApp1\bin\Debug\System.Memory.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\System.Numerics.Vectors.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\System.Text.Encodings.Web.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\System.Text.Json.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\System.Threading.Tasks.Extensions.dll" />
+    <Content Include="WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe" />
+    <Content Include="WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb" />
+    <Content Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.FileListAbsolute.txt" />
+    <Content Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe" />
+    <Content Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.pdb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WindowsFormsApp1\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form1.resources" />
+    <EmbeddedResource Include="WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Properties.Resources.resources" />
+    <EmbeddedResource Include="WindowsFormsApp1\Properties\Resources.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WindowsFormsApp1\bin\Release\" />
+    <Folder Include="WindowsFormsApp1\obj\Debug\TempPE\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>
