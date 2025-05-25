@@ -17,8 +17,8 @@ class PgLogger:
 
     def log_signal_brut(self, signal: dict):
         insert_query = """
-        INSERT INTO signaux_bruts (symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, ema, close, open, high, low, pattern, eventlog, raw_json, valeur)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO signaux_bruts (symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, ema, close, open, high, low, pattern, eventlog, raw_json, valeur, intervalle)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING id;
         """
         valeurs = (
@@ -37,7 +37,8 @@ class PgLogger:
             signal.get("pattern"),
             signal.get("eventlog"),
             psycopg2.extras.Json(signal),
-            signal.get("valeur")
+            signal.get("valeur"),
+            signal.get("intervalle")
         )
         self.cur.execute(insert_query, valeurs)
         inserted_id = self.cur.fetchone()[0]

@@ -36,16 +36,22 @@ class TestSignauxBrutsTable(unittest.TestCase):
         pattern = "hammer"
         eventlog = "test insertion signal brut"
         raw_json = {'test': 'ok'}
+        intervalle = "1h"
         insert_query = """
-        INSERT INTO signaux_bruts (symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, ema, close, open, high, low, pattern, eventlog, raw_json)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO signaux_bruts (symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, ema, close, open, high, low, pattern, eventlog, raw_json, intervalle)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING id;
         """
-        valeurs = (symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, ema, close, open_, high, low, pattern, eventlog, psycopg2.extras.Json(raw_json))
+        valeurs = (symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, ema, close, open_, high, low, pattern, eventlog, psycopg2.extras.Json(raw_json), intervalle)
         self.cur.execute(insert_query, valeurs)
         inserted_id = self.cur.fetchone()[0]
         self.conn.commit()
         self.assertIsNotNone(inserted_id)
+        # Vérification lecture
+        self.cur.execute("SELECT intervalle FROM signaux_bruts WHERE id = %s", (inserted_id,))
+        row = self.cur.fetchone()
+        self.assertIsNotNone(row)
+        self.assertEqual(row[0], intervalle)
         # Nettoyage
         self.cur.execute("DELETE FROM signaux_bruts WHERE id = %s", (inserted_id,))
         self.conn.commit()
@@ -54,19 +60,21 @@ class TestSignauxBrutsTable(unittest.TestCase):
         # On insère d'abord une ligne pour la lire ensuite
         symbol = "TEST/READ"
         dateheure = datetime.now()
+        intervalle = "15m"
         insert_query = """
-        INSERT INTO signaux_bruts (symbol, dateheure)
-        VALUES (%s, %s)
+        INSERT INTO signaux_bruts (symbol, dateheure, intervalle)
+        VALUES (%s, %s, %s)
         RETURNING id;
         """
-        self.cur.execute(insert_query, (symbol, dateheure))
+        self.cur.execute(insert_query, (symbol, dateheure, intervalle))
         inserted_id = self.cur.fetchone()[0]
         self.conn.commit()
         # Lecture
-        self.cur.execute("SELECT symbol, dateheure FROM signaux_bruts WHERE id = %s", (inserted_id,))
+        self.cur.execute("SELECT symbol, dateheure, intervalle FROM signaux_bruts WHERE id = %s", (inserted_id,))
         row = self.cur.fetchone()
         self.assertIsNotNone(row)
         self.assertEqual(row[0], symbol)
+        self.assertEqual(row[2], intervalle)
         # Nettoyage
         self.cur.execute("DELETE FROM signaux_bruts WHERE id = %s", (inserted_id,))
         self.conn.commit()
