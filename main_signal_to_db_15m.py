@@ -210,7 +210,7 @@ if __name__ == "__main__":
                         pattern_bool["pattern_spinning_top"] = val in (100, -100, "100", "-100")
                     if val in (100, -100, "100", "-100"):
                         pattern_found = True
-            # Construction du signal uniquement après toutes les vérifications
+            # Après récupération des patterns, on met pattern='CALL' (peu importe la valeur des booléens)
             signal = {
                 "symbol": symbol,
                 "dateheure": datetime.now(),
@@ -227,15 +227,15 @@ if __name__ == "__main__":
                 "open": indicateurs.get("open"),
                 "high": indicateurs.get("high"),
                 "low": indicateurs.get("low"),
-                "pattern": "CALL" if pattern_found else indicateurs.get("pattern"),
+                "pattern": "CALL",
                 "eventlog": eventlog,
                 "raw_json": make_json_safe(indicateurs),
                 "valeur": indicateurs.get("close"),
                 "intervalle": intervalle,
                 "volume": volume,
-                "volume_moy20": volume_moy20,
+                "volume_moy20": volume_moyenne(volumes_hist),
                 "volume_relatif": volume_relatif_val,
-                "volume_relatif_moy6": volume_relatif_moy6,
+                "volume_relatif_moy6": volume_relatif_moyenne([v for v in volume_relatifs_hist if v is not None], n=6),
                 "macd_histogram": indicateurs.get("macd_histogram"),
                 "divergence_rsi": divergence_rsi_val,
                 "context_spy": context_spy_value
