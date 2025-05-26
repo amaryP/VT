@@ -1,0 +1,11 @@
+# Top 10 actions  by volume on usstock exchange (2025)
+AAPL      # Apple
+MSFT      # Microsoft
+NVDA      # Nvidia
+AMZN      # Amazon
+TSLA      # Tesla
+META      # Meta Platforms (Facebook)
+GOOGL     # Alphabet (Google)
+AMD       # Advanced Micro Devices
+NFLX      # Netflix
+INTC      # Intel

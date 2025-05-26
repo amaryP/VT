@@ -16,9 +16,16 @@ class PgLogger:
         self.cur = self.conn.cursor()
 
     def log_signal_brut(self, signal: dict):
+        from main_signal_to_db_1h import make_json_safe  # Import local pour éviter les cycles
         insert_query = """
-        INSERT INTO signaux_bruts (symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, ema, close, open, high, low, pattern, eventlog, raw_json, valeur, intervalle)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO signaux_bruts (
+            symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, bb_width,
+            ema, ema20, ema50, close, open, high, low,
+            pattern, eventlog, raw_json, valeur, intervalle,
+            volume, volume_moy20, volume_relatif, volume_relatif_moy6,
+            macd_histogram, divergence_rsi, context_spy, strategy_match
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING id;
         """
         valeurs = (
@@ -29,16 +36,27 @@ class PgLogger:
             signal.get("bb_upper"),
             signal.get("bb_lower"),
             signal.get("bb_mid"),
+            signal.get("bb_width"),
             signal.get("ema"),
+            signal.get("ema20"),
+            signal.get("ema50"),
             signal.get("close"),
             signal.get("open"),
             signal.get("high"),
             signal.get("low"),
             signal.get("pattern"),
             signal.get("eventlog"),
-            psycopg2.extras.Json(signal),
+            psycopg2.extras.Json(make_json_safe(signal.get("raw_json"))),
             signal.get("valeur"),
-            signal.get("intervalle")
+            signal.get("intervalle"),
+            signal.get("volume"),
+            signal.get("volume_moy20"),
+            signal.get("volume_relatif"),
+            signal.get("volume_relatif_moy6"),
+            signal.get("macd_histogram"),
+            signal.get("divergence_rsi"),
+            signal.get("context_spy"),
+            psycopg2.extras.Json(make_json_safe(signal.get("strategy_match"))) if signal.get("strategy_match") is not None else None
         )
         self.cur.execute(insert_query, valeurs)
         inserted_id = self.cur.fetchone()[0]

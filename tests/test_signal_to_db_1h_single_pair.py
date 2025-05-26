@@ -13,7 +13,8 @@ def test_signal_to_db_1h_single_pair():
         f.write(single_pair)
     # Exécute le script principal
     try:
-        result = subprocess.run(["python", "main_signal_to_db_1h.py"], capture_output=True, text=True, timeout=180)
+        result = subprocess.run(["python", "../main_signal_to_db_1h.py"], capture_output=True, text=True, timeout=180)
+        #result = subprocess.run(["python", "main_signal_to_db_1h.py"], capture_output=True, text=True, timeout=180)
         print(result.stdout)
         print(result.stderr)
         assert result.returncode == 0, f"Le script a échoué: {result.stderr}"
