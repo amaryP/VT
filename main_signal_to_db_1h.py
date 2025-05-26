@@ -7,6 +7,7 @@ import copy
 import json
 from indicators_rules import evaluate_rsi, evaluate_macd, evaluate_bbands
 from calcul_indicateurs import volume_moyenne, volume_relatif, volume_relatif_moyenne, detect_divergence_rsi
+from context_spy import get_context_spy
 
 # Fonction utilitaire pour logguer le résultat d'intégration
 def log_integration_result(test_name, status, details):
@@ -72,6 +73,30 @@ def load_wishlist_symbols():
         print(f"[ERREUR] Impossible de lire la wishlist {filepath} : {e}")
     return symbols
 
+def call_taapi_with_retry(taapi_method, *args, max_retries=3, sleep_seconds=10, **kwargs):
+    """
+    Wrapper pour gérer le rate-limit taapi.io (erreur 429) avec retry/sleep.
+    """
+    import time
+    import requests
+    for attempt in range(1, max_retries + 1):
+        try:
+            return taapi_method(*args, **kwargs)
+        except Exception as e:
+            if hasattr(e, 'response') and getattr(e.response, 'status_code', None) == 429:
+                print(f"[TAAPI RATE-LIMIT] 429 reçu, tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
+                time.sleep(sleep_seconds)
+            elif isinstance(e, requests.exceptions.HTTPError) and getattr(e.response, 'status_code', None) == 429:
+                print(f"[TAAPI RATE-LIMIT] 429 reçu (requests), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
+                time.sleep(sleep_seconds)
+            elif '429' in str(e):
+                print(f"[TAAPI RATE-LIMIT] 429 reçu (texte), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
+                time.sleep(sleep_seconds)
+            else:
+                raise
+    print(f"[TAAPI RATE-LIMIT] 429 persistant après {max_retries} essais. Passage au symbole suivant.")
+    return None
+
 if __name__ == "__main__":
     try:
         # Détection du type d'asset pour l'exchange
@@ -89,7 +114,7 @@ if __name__ == "__main__":
         symbols = load_wishlist_symbols()
         # Suppression du test unique : traite toute la wishlist
         for symbol in symbols:
-            indicateurs = taapi.get_indicators_bulk(symbol, interval=intervalle)
+            indicateurs = call_taapi_with_retry(taapi.get_indicators_bulk, symbol, interval=intervalle)
             volumes_hist = []
             closes_hist = []
             rsis_hist = []
@@ -99,7 +124,10 @@ if __name__ == "__main__":
                     {"indicator": "candle", "results": 20},
                     {"indicator": "rsi", "optInTimePeriod": 14, "results": 20}
                 ]
-                hist = taapi.get_indicators_bulk(symbol, interval=intervalle, indicators=indicators_hist)
+                hist = call_taapi_with_retry(taapi.get_indicators_bulk, symbol, interval=intervalle, indicators=indicators_hist)
+                if hist is None:
+                    print(f"[WARN] Impossible de récupérer l'historique pour {symbol} (rate-limit). Skip.")
+                    continue
                 print(f"[DEBUG] {symbol} hist raw_json: {hist.get('raw_json')}")
                 for entry in hist.get("raw_json", {}).get("data", []):
                     indicator = entry.get("indicator")
@@ -142,6 +170,40 @@ if __name__ == "__main__":
                     volume_relatifs_hist.append(None)
             volume_relatif_moy6 = volume_relatif_moyenne([v for v in volume_relatifs_hist if v is not None], n=6)
             divergence_rsi_val = detect_divergence_rsi(closes_hist, rsis_hist)
+            # === Appel bulk pour les patterns de chandeliers (uniquement ceux stockés en base) ===
+            all_pattern_indicators = [
+                {"indicator": "invertedhammer"},
+                {"indicator": "engulfing"},
+                {"indicator": "eveningstar"},
+                {"indicator": "doji"},
+                {"indicator": "spinningtop"}
+            ]
+            pattern_bool = {}
+            pattern_found = False
+            for i in range(0, len(all_pattern_indicators), 20):
+                chunk = all_pattern_indicators[i:i+20]
+                patterns_result = call_taapi_with_retry(taapi.get_indicators_bulk, symbol, interval=intervalle, indicators=chunk)
+                if patterns_result is None:
+                    print(f"[WARN] Impossible de récupérer les patterns pour {symbol} (rate-limit). Skip patterns.")
+                    continue
+                for entry in patterns_result.get("raw_json", {}).get("data", []):
+                    indicator = entry.get("indicator", "")
+                    res = entry.get("result", {})
+                    val = res.get("value")
+                    if indicator == "invertedhammer":
+                        pattern_bool["pattern_inverted_hammer"] = val in (100, -100, "100", "-100")
+                    elif indicator == "engulfing":
+                        pattern_bool["pattern_bullish_engulfing"] = val in (100, "100")
+                        pattern_bool["pattern_bearish_engulfing"] = val in (-100, "-100")
+                    elif indicator == "eveningstar":
+                        pattern_bool["pattern_evening_star"] = val in (100, -100, "100", "-100")
+                    elif indicator == "doji":
+                        pattern_bool["pattern_doji"] = val in (100, -100, "100", "-100")
+                    elif indicator == "spinningtop":
+                        pattern_bool["pattern_spinning_top"] = val in (100, -100, "100", "-100")
+                    if val in (100, -100, "100", "-100"):
+                        pattern_found = True
+            context_spy_value = get_context_spy(intervalle)
             signal = {
                 "symbol": symbol,
                 "dateheure": datetime.now(),
@@ -158,7 +220,7 @@ if __name__ == "__main__":
                 "open": indicateurs.get("open"),
                 "high": indicateurs.get("high"),
                 "low": indicateurs.get("low"),
-                "pattern": indicateurs.get("pattern"),
+                "pattern": "CALL" if pattern_found else (signal.get("pattern") or indicateurs.get("pattern")),
                 "eventlog": eventlog,
                 "raw_json": make_json_safe(indicateurs),
                 "valeur": indicateurs.get("close"),
@@ -169,9 +231,9 @@ if __name__ == "__main__":
                 "volume_relatif_moy6": volume_relatif_moy6,
                 "macd_histogram": indicateurs.get("macd_histogram"),
                 "divergence_rsi": divergence_rsi_val,
-                "context_spy": None,
-                "strategy_match": None
+                "context_spy": context_spy_value
             }
+            signal.update(pattern_bool)
             inserted_id = logger.log_signal_brut(signal)
             print(f"Signal brut inséré avec id={inserted_id} (intervalle={intervalle}, symbol={symbol})")
         logger.close()

@@ -17,17 +17,18 @@ class PgLogger:
 
     def log_signal_brut(self, signal: dict):
         from main_signal_to_db_1h import make_json_safe  # Import local pour éviter les cycles
-        insert_query = """
-        INSERT INTO signaux_bruts (
-            symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, bb_width,
-            ema, ema20, ema50, close, open, high, low,
-            pattern, eventlog, raw_json, valeur, intervalle,
-            volume, volume_moy20, volume_relatif, volume_relatif_moy6,
-            macd_histogram, divergence_rsi, context_spy, strategy_match
+        # Mapping patterns API -> colonnes SQL
+        def get_pattern_val(signal, key):
+            return signal.get(key) if key in signal else None
+        # 1. Insertion de base (sans les patterns)
+        insert_query = (
+            "INSERT INTO signaux_bruts ("
+            "symbol, dateheure, rsi14, rsi5, bb_upper, bb_lower, bb_mid, ema, close, open, high, low, pattern, "
+            "eventlog, raw_json, valeur, intervalle, ema20, ema50, bb_width, volume, volume_moy20, volume_relatif, volume_relatif_moy6, macd_histogram, divergence_rsi, context_spy"
+            ") VALUES ("
+            + ", ".join(["%s"] * 27)
+            + ") RETURNING id;"
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        RETURNING id;
-        """
         valeurs = (
             signal.get("symbol"),
             signal.get("dateheure", datetime.now()),
@@ -36,10 +37,7 @@ class PgLogger:
             signal.get("bb_upper"),
             signal.get("bb_lower"),
             signal.get("bb_mid"),
-            signal.get("bb_width"),
             signal.get("ema"),
-            signal.get("ema20"),
-            signal.get("ema50"),
             signal.get("close"),
             signal.get("open"),
             signal.get("high"),
@@ -49,17 +47,38 @@ class PgLogger:
             psycopg2.extras.Json(make_json_safe(signal.get("raw_json"))),
             signal.get("valeur"),
             signal.get("intervalle"),
+            signal.get("ema20"),
+            signal.get("ema50"),
+            signal.get("bb_width"),
             signal.get("volume"),
             signal.get("volume_moy20"),
             signal.get("volume_relatif"),
             signal.get("volume_relatif_moy6"),
             signal.get("macd_histogram"),
             signal.get("divergence_rsi"),
-            signal.get("context_spy"),
-            psycopg2.extras.Json(make_json_safe(signal.get("strategy_match"))) if signal.get("strategy_match") is not None else None
+            signal.get("context_spy")
         )
+        print(f"[DEBUG] Nb colonnes requête: {insert_query.count('%s')}, nb valeurs: {len(valeurs)}")
+        print(f"[DEBUG] Types des valeurs: {[type(v) for v in valeurs]}")
         self.cur.execute(insert_query, valeurs)
         inserted_id = self.cur.fetchone()[0]
+        # 2. UPDATE pour les patterns
+        update_query = (
+            "UPDATE signaux_bruts SET "
+            "pattern_inverted_hammer = %s, pattern_bullish_engulfing = %s, pattern_bearish_engulfing = %s, "
+            "pattern_evening_star = %s, pattern_doji = %s, pattern_spinning_top = %s "
+            "WHERE id = %s"
+        )
+        update_vals = (
+            get_pattern_val(signal, "pattern_inverted_hammer"),
+            get_pattern_val(signal, "pattern_bullish_engulfing"),
+            get_pattern_val(signal, "pattern_bearish_engulfing"),
+            get_pattern_val(signal, "pattern_evening_star"),
+            get_pattern_val(signal, "pattern_doji"),
+            get_pattern_val(signal, "pattern_spinning_top"),
+            inserted_id
+        )
+        self.cur.execute(update_query, update_vals)
         self.conn.commit()
         return inserted_id
 

@@ -140,6 +140,13 @@ class TaapiClient:
                 result["low"] = res.get("low")
                 result["close"] = res.get("close")
                 result["volume"] = res.get("volume")
+            elif indicator in [
+                "invertedhammer", "engulfing", "hammer", "hangingman", "doji", "morningstar", "eveningstar", "shootingstar", "piercing", "harami", "haramicross", "belthold", "longline", "shortline", "highwave", "stalledpattern", "breakaway", "tasukigap", "sticksandwich", "ladderbottom", "kickingbylength"
+            ]:
+                val = res.get("value")
+                detected = val in (100, -100, "100", "-100")
+                col = f"pattern_{indicator.lower()}"
+                result[col] = detected
         # Calculs dérivés (ex: volume_moy20, volume_relatif, etc.)
         # À compléter selon logique métier (ex: stocker historique pour calculs glissants)
         return result
