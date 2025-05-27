@@ -1,11 +1,15 @@
 import os
 import requests
 
-def get_context_spy(interval: str) -> str:
+def get_context_spy(interval: str, crypto: bool = False) -> str:
     """
     Récupère les deux derniers close du SPY sur l’intervalle donné,
-    calcule la variation %, et retourne le contexte : 'bullish', 'neutral', 'bearish'
+    calcule la variation %, et retourne le contexte : 'bullish', 'neutral', 'bearish'.
+    Si crypto=True, retourne toujours 'neutral' (aucun contexte macro pour crypto).
     """
+    if crypto:
+        return "neutral"
+
     TAAPI_SECRET = os.getenv("TAAPI_SECRET") or os.getenv("KEY_TAAPI_IO")
     if not TAAPI_SECRET:
         raise RuntimeError("TAAPI_SECRET ou KEY_TAAPI_IO non défini dans les variables d'environnement.")

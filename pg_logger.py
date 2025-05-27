@@ -3,6 +3,16 @@ import psycopg2
 import psycopg2.extras
 from datetime import datetime
 
+def make_json_safe(obj):
+    if isinstance(obj, dict):
+        return {k: make_json_safe(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [make_json_safe(v) for v in obj]
+    elif hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    else:
+        return obj
+
 class PgLogger:
     def __init__(self):
         pc_id = "PC1000"
@@ -16,7 +26,6 @@ class PgLogger:
         self.cur = self.conn.cursor()
 
     def log_signal_brut(self, signal: dict):
-        from main_signal_to_db_1h import make_json_safe  # Import local pour éviter les cycles
         # Mapping patterns API -> colonnes SQL
         def get_pattern_val(signal, key):
             return signal.get(key) if key in signal else None

@@ -62,8 +62,10 @@ class TaapiClient:
                 "macd", "bbands", "volume", "candle"
             ]
         # Correction stocks : type=stocks au lieu de exchange=stocks
+        # Correction crypto : format du symbole pour Binance
+        symbol_api = symbol
         construct = {
-            "symbol": symbol,
+            "symbol": symbol_api,
             "interval": interval,
             "indicators": [ind if isinstance(ind, dict) else {"indicator": ind} for ind in indicators]
         }
@@ -78,11 +80,31 @@ class TaapiClient:
         if results is not None:
             payload["results"] = results
         headers = {"Content-Type": "application/json"}
+        print(f"[TAAPI DEBUG] Payload envoyé: {payload}")
         response = requests.post(f"{self.base_url}/bulk", json=payload, headers=headers)
         if not response.ok:
             print(f"[TAAPI ERROR] HTTP {response.status_code}: {response.text}")
-        response.raise_for_status()
-        data = response.json()
+        try:
+            response.raise_for_status()
+        except Exception as e:
+            # Si erreur 504 ou autre, et qu'on est en binance, tente une fois avec symbol sans slash
+            if self.exchange == "binance" and "/" in symbol:
+                symbol_api2 = symbol.replace("/", "")
+                print(f"[TAAPI DEBUG] Retry avec symbol='{symbol_api2}' (format sans slash)")
+                construct["symbol"] = symbol_api2
+                payload["construct"] = construct
+                print(f"[TAAPI DEBUG] Payload retry: {payload}")
+                response2 = requests.post(f"{self.base_url}/bulk", json=payload, headers=headers)
+                if not response2.ok:
+                    print(f"[TAAPI ERROR] HTTP {response2.status_code}: {response2.text}")
+                response2.raise_for_status()
+                data = response2.json()
+            else:
+                raise
+        else:
+            data = response.json()
+        if not data or not data.get("data"):
+            print(f"[TAAPI ERROR] Réponse vide ou incohérente pour symbol={symbol_api} (exchange={self.exchange})")
         # Extraction enrichie des valeurs utiles pour la table signaux_bruts
         result = {"symbol": symbol, "interval": interval, "raw_json": data}
         ema20 = ema50 = volume = volume_moy20 = None

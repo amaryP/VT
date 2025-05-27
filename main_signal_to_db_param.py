@@ -2,7 +2,6 @@ import os
 import sys
 from datetime import datetime
 from taapi_client import TaapiClient
-from pg_logger import PgLogger
 import psycopg2
 from calcul_indicateurs import volume_moyenne, volume_relatif, volume_relatif_moyenne, detect_divergence_rsi
 from context_spy import get_context_spy
@@ -19,10 +18,12 @@ def make_json_safe(obj):
     else:
         return obj
 
-def load_wishlist_symbols():
+def load_wishlist_symbols(crypto=False):
     wl_type = os.getenv("VT_WISHLIST_TYPE", "crypto").lower()
-    print(f"[DEBUG] load_wishlist_symbols: wl_type={wl_type}")
-    if wl_type == "usstock":
+    print(f"[DEBUG] load_wishlist_symbols: wl_type={wl_type}, crypto={crypto}")
+    if crypto:
+        filepath = os.path.join(os.path.dirname(__file__), "wishlist_symbols_crypto.txt")
+    elif wl_type == "usstock":
         filepath = os.path.join(os.path.dirname(__file__), "wishlist_symbols_usstock.txt")
     else:
         filepath = os.path.join(os.path.dirname(__file__), "wishlist_symbols.txt")
@@ -48,18 +49,25 @@ def call_taapi_with_retry(taapi_method, *args, max_retries=3, sleep_seconds=15, 
         try:
             return taapi_method(*args, **kwargs)
         except Exception as e:
-            if hasattr(e, 'response') and getattr(e.response, 'status_code', None) == 429:
+            status_code = None
+            if hasattr(e, 'response') and getattr(e.response, 'status_code', None):
+                status_code = e.response.status_code
+            elif isinstance(e, requests.exceptions.HTTPError) and getattr(e.response, 'status_code', None):
+                status_code = e.response.status_code
+            # Gestion rate-limit 429
+            if status_code == 429 or '429' in str(e):
                 print(f"[TAAPI RATE-LIMIT] 429 reçu, tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
                 time.sleep(sleep_seconds)
-            elif isinstance(e, requests.exceptions.HTTPError) and getattr(e.response, 'status_code', None) == 429:
-                print(f"[TAAPI RATE-LIMIT] 429 reçu (requests), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
+            # Gestion erreurs serveur 5xx (dont 504)
+            elif status_code is not None and 500 <= status_code < 600:
+                print(f"[TAAPI ERROR] {status_code} reçu (erreur serveur), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
                 time.sleep(sleep_seconds)
-            elif '429' in str(e):
-                print(f"[TAAPI RATE-LIMIT] 429 reçu (texte), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
+            elif '504' in str(e):
+                print(f"[TAAPI ERROR] 504 Gateway Timeout (texte), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
                 time.sleep(sleep_seconds)
             else:
                 raise
-    print(f"[TAAPI RATE-LIMIT] 429 persistant après {max_retries} essais. Passage au symbole suivant.")
+    print(f"[TAAPI ERROR] Erreur persistante après {max_retries} essais. Passage au symbole suivant.")
     return None
 
 def log_integration_result(test_name, status, details):
@@ -91,24 +99,21 @@ def log_integration_result(test_name, status, details):
     except Exception as e:
         print(f"Erreur lors du log fichier : {e}")
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python main_signal_to_db_param.py <intervalle>")
-        print("Exemple: python main_signal_to_db_param.py 15m")
-        sys.exit(1)
-    intervalle = sys.argv[1]
+def main_signal(intervalle, crypto=False):
+    # Import ici pour casser la boucle
+    from pg_logger import PgLogger
     try:
-        wl_type = os.getenv("VT_WISHLIST_TYPE", "crypto").lower()
-        if wl_type == "usstock":
-            exchange = "stocks"
-        else:
+        if crypto:
             exchange = "binance"
-        context_spy_value = get_context_spy(intervalle)
+            context_spy_value = ''
+        else:
+            exchange = "stocks"
+            context_spy_value = get_context_spy(intervalle)
         eventlog = f"Scan batch intégration signaux bruts (intervalle={intervalle})"
         indicateurs_bulk = ["rsi", "macd", "bbands", "ema", {"indicator": "rsi", "optInTimePeriod": 5}]
         taapi = TaapiClient(dry_run=os.getenv("DRY_RUN", "0") == "1", exchange=exchange)
         logger = PgLogger()
-        symbols = load_wishlist_symbols()
+        symbols = load_wishlist_symbols(crypto=crypto)
         print(f"[INFO] {len(symbols)} symboles à traiter : {symbols if len(symbols) < 30 else symbols[:30] + ['...']} ")
         if not symbols:
             print("[ERREUR] La wishlist est vide, arrêt du script.")
@@ -239,3 +244,14 @@ if __name__ == "__main__":
         log_integration_result(f"integration_signal_to_db_{intervalle}", "OK", f"{len(symbols)} signaux insérés intervalle={intervalle}")
     except Exception as e:
         print(f"[FATAL] Erreur inattendue dans le script : {e}")
+
+if __name__ == "__main__":
+    if len(sys.argv) not in (2, 3):
+        print("Usage: python main_signal_to_db_param.py <intervalle> [crypto]")
+        print("Exemple: python main_signal_to_db_param.py 15m crypto")
+        sys.exit(1)
+    intervalle = sys.argv[1]
+    crypto = False
+    if len(sys.argv) == 3 and sys.argv[2].lower() == "crypto":
+        crypto = True
+    main_signal(intervalle, crypto)
