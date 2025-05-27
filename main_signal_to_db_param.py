@@ -1,15 +1,67 @@
 import os
+import sys
 from datetime import datetime
 from taapi_client import TaapiClient
 from pg_logger import PgLogger
 import psycopg2
-import copy
-import json
-from indicators_rules import evaluate_rsi, evaluate_macd, evaluate_bbands
 from calcul_indicateurs import volume_moyenne, volume_relatif, volume_relatif_moyenne, detect_divergence_rsi
 from context_spy import get_context_spy
+import time
+import requests
 
-# Fonction utilitaire pour logguer le résultat d'intégration
+def make_json_safe(obj):
+    if isinstance(obj, dict):
+        return {k: make_json_safe(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [make_json_safe(v) for v in obj]
+    elif hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    else:
+        return obj
+
+def load_wishlist_symbols():
+    wl_type = os.getenv("VT_WISHLIST_TYPE", "crypto").lower()
+    print(f"[DEBUG] load_wishlist_symbols: wl_type={wl_type}")
+    if wl_type == "usstock":
+        filepath = os.path.join(os.path.dirname(__file__), "wishlist_symbols_usstock.txt")
+    else:
+        filepath = os.path.join(os.path.dirname(__file__), "wishlist_symbols.txt")
+    print(f"[DEBUG] load_wishlist_symbols: filepath={filepath}")
+    symbols = []
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and not line.startswith("//"):
+                    symbols.append(line.split()[0])
+        print(f"[DEBUG] load_wishlist_symbols: {len(symbols)} symbols loaded. Extrait: {symbols[:5]}")
+        if not symbols:
+            print(f"[WARNING] Wishlist vide: {filepath}")
+    except Exception as e:
+        print(f"[ERREUR] Impossible de lire la wishlist {filepath} : {e}")
+    return symbols
+
+def call_taapi_with_retry(taapi_method, *args, max_retries=3, sleep_seconds=15, **kwargs):
+    import time
+    import requests
+    for attempt in range(1, max_retries + 1):
+        try:
+            return taapi_method(*args, **kwargs)
+        except Exception as e:
+            if hasattr(e, 'response') and getattr(e.response, 'status_code', None) == 429:
+                print(f"[TAAPI RATE-LIMIT] 429 reçu, tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
+                time.sleep(sleep_seconds)
+            elif isinstance(e, requests.exceptions.HTTPError) and getattr(e.response, 'status_code', None) == 429:
+                print(f"[TAAPI RATE-LIMIT] 429 reçu (requests), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
+                time.sleep(sleep_seconds)
+            elif '429' in str(e):
+                print(f"[TAAPI RATE-LIMIT] 429 reçu (texte), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
+                time.sleep(sleep_seconds)
+            else:
+                raise
+    print(f"[TAAPI RATE-LIMIT] 429 persistant après {max_retries} essais. Passage au symbole suivant.")
+    return None
+
 def log_integration_result(test_name, status, details):
     try:
         pc_id = "PC1000"
@@ -33,88 +85,39 @@ def log_integration_result(test_name, status, details):
         conn.close()
     except Exception as e:
         print(f"Erreur lors du log du résultat d'intégration : {e}")
-    # Log fichier
     try:
         with open("TEST/LOGS/test_results.log", "a", encoding="utf-8") as f:
             f.write(f"{datetime.now().isoformat()} | {test_name} | {status} | {details}\n")
     except Exception as e:
         print(f"Erreur lors du log fichier : {e}")
 
-def make_json_safe(obj):
-    # Rend récursivement un objet JSON-serializable (datetime, date, etc.)
-    if isinstance(obj, dict):
-        return {k: make_json_safe(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [make_json_safe(v) for v in obj]
-    elif isinstance(obj, (datetime,)):
-        return obj.isoformat()
-    else:
-        return obj
-
-def load_wishlist_symbols():
-    """
-    Charge la wishlist selon la variable d'environnement VT_WISHLIST_TYPE (crypto/usstock).
-    Par défaut : crypto.
-    """
-    wl_type = os.getenv("VT_WISHLIST_TYPE", "crypto").lower()
-    if wl_type == "usstock":
-        filepath = os.path.join(os.path.dirname(__file__), "wishlist_symbols_usstock.txt")
-    else:
-        filepath = os.path.join(os.path.dirname(__file__), "wishlist_symbols.txt")
-    symbols = []
-    try:
-        with open(filepath, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith("#") and not line.startswith("//"):
-                    # Prend uniquement le symbole (avant commentaire éventuel)
-                    symbols.append(line.split()[0])
-    except Exception as e:
-        print(f"[ERREUR] Impossible de lire la wishlist {filepath} : {e}")
-    return symbols
-
-def call_taapi_with_retry(taapi_method, *args, max_retries=3, sleep_seconds=10, **kwargs):
-    """
-    Wrapper pour gérer le rate-limit taapi.io (erreur 429) avec retry/sleep.
-    """
-    import time
-    import requests
-    for attempt in range(1, max_retries + 1):
-        try:
-            return taapi_method(*args, **kwargs)
-        except Exception as e:
-            if hasattr(e, 'response') and getattr(e.response, 'status_code', None) == 429:
-                print(f"[TAAPI RATE-LIMIT] 429 reçu, tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
-                time.sleep(sleep_seconds)
-            elif isinstance(e, requests.exceptions.HTTPError) and getattr(e.response, 'status_code', None) == 429:
-                print(f"[TAAPI RATE-LIMIT] 429 reçu (requests), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
-                time.sleep(sleep_seconds)
-            elif '429' in str(e):
-                print(f"[TAAPI RATE-LIMIT] 429 reçu (texte), tentative {attempt}/{max_retries}. Attente {sleep_seconds}s...")
-                time.sleep(sleep_seconds)
-            else:
-                raise
-    print(f"[TAAPI RATE-LIMIT] 429 persistant après {max_retries} essais. Passage au symbole suivant.")
-    return None
-
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python main_signal_to_db_param.py <intervalle>")
+        print("Exemple: python main_signal_to_db_param.py 15m")
+        sys.exit(1)
+    intervalle = sys.argv[1]
     try:
-        # Détection du type d'asset pour l'exchange
         wl_type = os.getenv("VT_WISHLIST_TYPE", "crypto").lower()
         if wl_type == "usstock":
             exchange = "stocks"
         else:
             exchange = "binance"
-        # Paramètres de test
-        intervalle = "1h"
-        eventlog = "Scan batch wishlist intégration signaux bruts"
+        context_spy_value = get_context_spy(intervalle)
+        eventlog = f"Scan batch intégration signaux bruts (intervalle={intervalle})"
         indicateurs_bulk = ["rsi", "macd", "bbands", "ema", {"indicator": "rsi", "optInTimePeriod": 5}]
         taapi = TaapiClient(dry_run=os.getenv("DRY_RUN", "0") == "1", exchange=exchange)
         logger = PgLogger()
         symbols = load_wishlist_symbols()
-        # Suppression du test unique : traite toute la wishlist
+        print(f"[INFO] {len(symbols)} symboles à traiter : {symbols if len(symbols) < 30 else symbols[:30] + ['...']} ")
+        if not symbols:
+            print("[ERREUR] La wishlist est vide, arrêt du script.")
+            exit(1)
         for symbol in symbols:
             indicateurs = call_taapi_with_retry(taapi.get_indicators_bulk, symbol, interval=intervalle)
+            if indicateurs is None:
+                print(f"[WARN] Impossible de récupérer les indicateurs pour {symbol} (rate-limit). Skip.")
+                continue
             volumes_hist = []
             closes_hist = []
             rsis_hist = []
@@ -128,38 +131,36 @@ if __name__ == "__main__":
                 if hist is None:
                     print(f"[WARN] Impossible de récupérer l'historique pour {symbol} (rate-limit). Skip.")
                     continue
-                print(f"[DEBUG] {symbol} hist raw_json: {hist.get('raw_json')}")
                 for entry in hist.get("raw_json", {}).get("data", []):
                     indicator = entry.get("indicator")
                     result = entry.get("result", {})
                     if indicator == "volume":
-                        # Pour les actions US, l'historique est dans result['value'] (liste)
                         values = result.get("values")
                         if values is None and isinstance(result.get("value"), list):
                             values = result["value"]
-                        print(f"[DEBUG] {symbol} volume values: {values}")
                         if values:
                             volumes_hist.extend([v for v in values if v is not None])
                     elif indicator == "candle":
                         values = result.get("values")
-                        print(f"[DEBUG] {symbol} candle values: {values}")
                         if values:
                             closes_hist.extend([v.get("close") for v in values if v.get("close") is not None])
+                        elif result.get("close") and isinstance(result.get("close"), list):
+                            closes_hist.extend([v for v in result["close"] if v is not None])
                     elif indicator == "rsi":
                         values = result.get("values")
-                        print(f"[DEBUG] {symbol} rsi values: {values}")
                         if values:
                             rsis_hist.extend([v for v in values if v is not None])
+                        elif result.get("value") and isinstance(result.get("value"), list):
+                            rsis_hist.extend([v for v in result["value"] if v is not None])
             except Exception as e:
                 print(f"[DEBUG] Exception lors de la récupération de l'historique pour {symbol}: {e}")
-            print(f"[DEBUG] {symbol} volumes_hist: {volumes_hist}")
-            print(f"[DEBUG] {symbol} closes_hist: {closes_hist}")
-            print(f"[DEBUG] {symbol} rsis_hist: {rsis_hist}")
+                continue
+            if not volumes_hist or not closes_hist or not rsis_hist:
+                print(f"[WARN] Données historiques manquantes pour {symbol}. Skip.")
+                continue
             volume_moy20 = volume_moyenne(volumes_hist)
             volume = indicateurs.get("volume")
             volume_relatif_val = volume_relatif(volume, volume_moy20)
-            # Calcul du volume_relatif_moy6 (moyenne glissante sur 6 derniers volume_relatif)
-            # On reconstitue l'historique des volume_relatif à partir de volumes_hist et volume_moyenne
             volume_relatifs_hist = []
             for i in range(len(volumes_hist)):
                 v = volumes_hist[i]
@@ -170,7 +171,6 @@ if __name__ == "__main__":
                     volume_relatifs_hist.append(None)
             volume_relatif_moy6 = volume_relatif_moyenne([v for v in volume_relatifs_hist if v is not None], n=6)
             divergence_rsi_val = detect_divergence_rsi(closes_hist, rsis_hist)
-            # === Appel bulk pour les patterns de chandeliers (uniquement ceux stockés en base) ===
             all_pattern_indicators = [
                 {"indicator": "invertedhammer"},
                 {"indicator": "engulfing"},
@@ -203,7 +203,6 @@ if __name__ == "__main__":
                         pattern_bool["pattern_spinning_top"] = val in (100, -100, "100", "-100")
                     if val in (100, -100, "100", "-100"):
                         pattern_found = True
-            context_spy_value = get_context_spy(intervalle)
             signal = {
                 "symbol": symbol,
                 "dateheure": datetime.now(),
@@ -220,15 +219,15 @@ if __name__ == "__main__":
                 "open": indicateurs.get("open"),
                 "high": indicateurs.get("high"),
                 "low": indicateurs.get("low"),
-                "pattern": "CALL" if pattern_found else (signal.get("pattern") or indicateurs.get("pattern")),
+                "pattern": "CALL",
                 "eventlog": eventlog,
                 "raw_json": make_json_safe(indicateurs),
                 "valeur": indicateurs.get("close"),
                 "intervalle": intervalle,
                 "volume": volume,
-                "volume_moy20": volume_moy20,
+                "volume_moy20": volume_moyenne(volumes_hist),
                 "volume_relatif": volume_relatif_val,
-                "volume_relatif_moy6": volume_relatif_moy6,
+                "volume_relatif_moy6": volume_relatif_moyenne([v for v in volume_relatifs_hist if v is not None], n=6),
                 "macd_histogram": indicateurs.get("macd_histogram"),
                 "divergence_rsi": divergence_rsi_val,
                 "context_spy": context_spy_value
