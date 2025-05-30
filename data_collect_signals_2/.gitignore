@@ -1,0 +1,6 @@
+# .gitignore pour data_collect_signals
+__pycache__/
+*.pyc
+logs/
+DATA/
+.env

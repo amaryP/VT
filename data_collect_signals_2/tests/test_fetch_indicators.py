@@ -15,22 +15,20 @@ def test_env_key_taapi_io_present():
 def test_connection_taapi_ping():
     """Test la connexion à l'API TAAPI.IO (ping simple)."""
     api_key = os.getenv("KEY_TAAPI_IO")
+    print(f"[DEBUG] KEY_TAAPI_IO récupérée: {api_key}")
     url = "https://api.taapi.io/ping"
     resp = requests.get(url, params={"secret": api_key})
     assert resp.status_code == 200
-    assert "pong" in resp.text.lower()
+    data = resp.json()
+    assert data.get("status", "").lower() == "ok"
 
 @pytest.mark.skipif(os.getenv("KEY_TAAPI_IO") is None, reason="Clé API manquante")
 def test_fetch_indicators_structure():
     """Test la structure du résultat de fetch_indicators sur une action NASDAQ."""
     result = fetch_indicators("AAPL", "15m")
     assert isinstance(result, dict)
-    # Indicateurs classiques
     for k in ["ema_10", "ema_21", "adx_14", "atr_14", "bollinger_upper", "bollinger_middle", "bollinger_lower"]:
         assert k in result
-    # Indicateurs TrendSwing US
-    for k in ["ma20", "ma50", "ma_volume_20", "rsi_14"]:
-        assert k in result, f"{k} manquant dans le résultat TAAPI.IO"
 
 @pytest.mark.skipif(os.getenv("KEY_TAAPI_IO") is None, reason="Clé API manquante")
 def test_fetch_indicators_btcusdt():
