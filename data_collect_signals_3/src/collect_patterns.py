@@ -23,7 +23,7 @@ def detect_patterns_on_signals(input_csv, output_csv=None):
     for idx, row in df_valid.iterrows():
         try:
             detected = fetch_patterns(row['actif'], interval='1d', patterns=patterns)
-            # detected peut être le nom du pattern détecté ou None
+            print(f"[DEBUG] {row['actif']} patterns detected: {detected}")  # Ajout log debug
             for pat in patterns:
                 df_valid.at[idx, pat] = (detected == pat)
         except Exception as e:
